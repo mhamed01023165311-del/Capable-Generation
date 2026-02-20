@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مسابقة رمضان - منظور المطور المتقدم</title>
+    <title>مسابقة رمضان الاحترافية V3</title>
     <style>
         * { box-sizing: border-box; }
         body, html { 
@@ -14,44 +14,28 @@
             display: flex; flex-direction: column; align-items: center;
             overflow: hidden;
         }
-
         .logo { width: 120px; margin-top: 20px; z-index: 10; }
-
-        /* واجهة المسابقة */
         #quiz-interface {
             display: none; background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(10px); border: 2px solid #ffd700;
             border-radius: 25px; padding: 30px; margin-top: 20px;
             width: 85%; max-width: 450px; text-align: center; color: white;
         }
-
         .ans-btn {
             width: 100%; padding: 15px; margin: 8px 0;
             background: rgba(255, 255, 255, 0.05); border: 1px solid #ffd700;
             color: white; border-radius: 12px; cursor: pointer; font-size: 18px;
         }
-
-        #custom-alert {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: #0b0f19; border: 2px solid #ffd700; padding: 20px; border-radius: 15px;
-            z-index: 5000; text-align: center; color: white; box-shadow: 0 0 30px #ffd700;
-        }
-
-        /* واجهة المطور المطورة */
+        /* واجهة المطور */
         #admin-interface {
-            display: none; background: #0b0f19; color: white;
+            display: none; background: #0b101b; color: white;
             width: 100%; height: 100vh; position: fixed; top: 0; left: 0;
             padding: 20px; overflow-y: auto; z-index: 2000;
         }
-
-        .admin-box { background: #1a202c; padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #444; }
+        .admin-box { background: #1a202c; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #ffd700; }
         input { width: 100%; padding: 10px; margin: 5px 0; border-radius: 5px; border: none; }
-        
-        /* تنسيق جدول النتائج الجديد */
-        .log-tag { padding: 5px 10px; border-radius: 5px; font-weight: bold; color: white; display: inline-block; }
-        .tag-correct { background-color: #28a745; border: 1px solid #1e7e34; } /* أخضر للإجابة الصح */
-        .tag-wrong { background-color: #dc3545; border: 1px solid #bd2130; } /* أحمر للإجابة الغلط */
-
+        .session-block { background: #2d3748; padding: 10px; margin-top: 15px; border-radius: 8px; border-right: 4px solid #ffd700; }
+        .delete-btn { background: #ff4d4d; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; float: left; }
         #login-screen {
             position: fixed; inset: 0; background: rgba(0,0,0,0.95);
             display: flex; justify-content: center; align-items: center; z-index: 3000;
@@ -60,18 +44,22 @@
 </head>
 <body>
 
+    <audio id="bg-music" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
     <img src="loge.png" class="logo">
 
     <div id="login-screen">
         <div style="background:white; padding:30px; border-radius:15px; text-align:center; width:300px;">
-            <h3 style="color:black">تسجيل الدخول</h3>
+            <h3 style="color:black">رمضان كريم</h3>
             <input type="email" id="email-input" placeholder="اكتب إيميلك">
-            <button onclick="checkAccess()" style="width:100%; padding:12px; background:#ffd700; border:none; cursor:pointer; font-weight:bold;">دخول</button>
+            <button onclick="checkAccess()" style="width:100%; padding:12px; background:#ffd700; font-weight:bold; cursor:pointer;">دخول</button>
         </div>
     </div>
 
     <div id="quiz-interface">
-        <h2 id="q-text">تحميل السؤال...</h2>
+        <h2 id="q-text">تحميل...</h2>
         <div id="options-box">
             <button class="ans-btn" id="btn1" onclick="submitAns(1)"></button>
             <button class="ans-btn" id="btn2" onclick="submitAns(2)"></button>
@@ -80,111 +68,123 @@
         </div>
     </div>
 
-    <div id="custom-alert">
-        <h3 style="color:#ffd700">تقبل الله طاعتكم 🌙</h3>
-        <p>تم تسجيل إجابتك بنجاح!</p>
-        <button onclick="document.getElementById('custom-alert').style.display='none'" style="background:#ffd700; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;">إغلاق</button>
-    </div>
-
     <div id="admin-interface">
-        <h2 style="color:#ffd700">⚙️ منظور المطور لإدارة المسابقة</h2>
+        <h2 style="color:#ffd700">⚙️ لوحة التحكم - أرشيف الأسئلة</h2>
         <div class="admin-box">
-            <h4>إعداد السؤال والحل الصحيح:</h4>
+            <h4>إضافة سؤال جديد (سيبدأ أرشيف جديد):</h4>
             <input type="text" id="edit-q" placeholder="السؤال">
             <input type="text" id="edit-a1" placeholder="إجابة 1">
             <input type="text" id="edit-a2" placeholder="إجابة 2">
             <input type="text" id="edit-a3" placeholder="إجابة 3">
             <input type="text" id="edit-a4" placeholder="إجابة 4">
-            <p style="margin: 10px 0 5px;">رقم الإجابة الصحيحة (1-4):</p>
-            <input type="number" id="edit-correct" min="1" max="4" placeholder="مثال: 1">
-            <button onclick="saveAll()" style="width:100%; padding:12px; background:green; color:white; border:none; margin-top:15px; cursor:pointer; font-weight:bold;">حفظ التعديلات النهائية</button>
+            <input type="number" id="edit-correct" placeholder="رقم الإجابة الصح (1-4)">
+            <button onclick="createNewQuestion()" style="width:100%; padding:12px; background:green; color:white; font-weight:bold; margin-top:10px; cursor:pointer;">حفظ وتفعيل السؤال الجديد</button>
         </div>
 
-        <h3>سجل المتسابقين والنتائج:</h3>
-        <table border="1" style="width:100%; background:#1a202c; text-align:center; border-collapse: collapse;">
-            <thead><tr style="background:#2d3748"><th>المتسابق</th><th>الإجابة المختارة</th><th>الحالة</th></tr></thead>
-            <tbody id="logs-body"></tbody>
-        </table>
-        <button onclick="location.reload()" style="margin-top:20px; background:red; color:white; border:none; padding:10px 20px; cursor:pointer; border-radius:5px;">تسجيل خروج</button>
+        <h3>🗄️ الأرشيف (كل سؤال بإجاباته):</h3>
+        <div id="archive-display"></div>
+        <button onclick="location.reload()" style="background:red; color:white; padding:10px; margin-top:20px;">خروج</button>
     </div>
 
     <script>
         const ADMIN_EMAIL = "admin@ramadan.com";
 
         window.onload = function() {
-            // استرجاع البيانات المخزنة
-            const savedQ = localStorage.getItem('quiz_q') || "السؤال الافتراضي؟";
-            const savedA1 = localStorage.getItem('quiz_a1') || "إجابة 1";
-            const savedA2 = localStorage.getItem('quiz_a2') || "إجابة 2";
-            const savedA3 = localStorage.getItem('quiz_a3') || "إجابة 3";
-            const savedA4 = localStorage.getItem('quiz_a4') || "إجابة 4";
-            const savedCorrect = localStorage.getItem('quiz_correct') || "1";
-
-            document.getElementById('q-text').innerText = savedQ;
-            document.getElementById('btn1').innerText = savedA1;
-            document.getElementById('btn2').innerText = savedA2;
-            document.getElementById('btn3').innerText = savedA3;
-            document.getElementById('btn4').innerText = savedA4;
-
-            // تعبئة الخانات في لوحة المطور لسهولة التعديل
-            document.getElementById('edit-q').value = savedQ;
-            document.getElementById('edit-a1').value = savedA1;
-            document.getElementById('edit-a2').value = savedA2;
-            document.getElementById('edit-a3').value = savedA3;
-            document.getElementById('edit-a4').value = savedA4;
-            document.getElementById('edit-correct').value = savedCorrect;
+            loadCurrentQuestion();
         };
 
         function checkAccess() {
             const email = document.getElementById('email-input').value;
-            if(!email) return alert("اكتب الإيميل");
+            if(!email) return;
+            
+            // تشغيل الموسيقى
+            document.getElementById('bg-music').play().catch(e => console.log("المتصفح منع التشغيل التلقائي"));
+            
             document.getElementById('login-screen').style.display = 'none';
             if(email === ADMIN_EMAIL) {
                 document.getElementById('admin-interface').style.display = 'block';
-                loadAdminLogs();
+                renderArchive();
             } else {
                 document.getElementById('quiz-interface').style.display = 'block';
                 localStorage.setItem('user', email);
             }
         }
 
-        function saveAll() {
-            localStorage.setItem('quiz_q', document.getElementById('edit-q').value);
-            localStorage.setItem('quiz_a1', document.getElementById('edit-a1').value);
-            localStorage.setItem('quiz_a2', document.getElementById('edit-a2').value);
-            localStorage.setItem('quiz_a3', document.getElementById('edit-a3').value);
-            localStorage.setItem('quiz_a4', document.getElementById('edit-a4').value);
-            localStorage.setItem('quiz_correct', document.getElementById('edit-correct').value);
-            alert("تم التثبيت بنجاح!");
+        function loadCurrentQuestion() {
+            const q = JSON.parse(localStorage.getItem('current_q')) || {
+                text: "ما هي السورة التي فرض فيها الصيام؟",
+                ans: ["1- البقرة", "2- الماعون", "3- الأنفال", "4- المائدة"],
+                correct: 1
+            };
+            document.getElementById('q-text').innerText = q.text;
+            document.getElementById('btn1').innerText = q.ans[0];
+            document.getElementById('btn2').innerText = q.ans[1];
+            document.getElementById('btn3').innerText = q.ans[2];
+            document.getElementById('btn4').innerText = q.ans[3];
+        }
+
+        function createNewQuestion() {
+            const newQ = {
+                id: Date.now(),
+                text: document.getElementById('edit-q').value,
+                ans: [
+                    document.getElementById('edit-a1').value,
+                    document.getElementById('edit-a2').value,
+                    document.getElementById('edit-a3').value,
+                    document.getElementById('edit-a4').value
+                ],
+                correct: document.getElementById('edit-correct').value
+            };
+            localStorage.setItem('current_q', JSON.stringify(newQ));
+            
+            // إضافة السؤال للأرشيف
+            let archive = JSON.parse(localStorage.getItem('archive') || "[]");
+            archive.push({ ...newQ, logs: [] });
+            localStorage.setItem('archive', JSON.stringify(archive));
+            
+            alert("تم تفعيل السؤال الجديد!");
             location.reload();
         }
 
         function submitAns(idx) {
-            let logs = JSON.parse(localStorage.getItem('logs') || "[]");
-            // حفظ نص الإجابة المختارة وليس الرقم فقط
-            const chosenText = localStorage.getItem('quiz_a' + idx);
-            const correctNum = localStorage.getItem('quiz_correct');
+            const currentQ = JSON.parse(localStorage.getItem('current_q'));
+            let archive = JSON.parse(localStorage.getItem('archive') || "[]");
             
-            logs.push({ 
-                user: localStorage.getItem('user'), 
-                ansText: chosenText,
-                isCorrect: (idx == correctNum) 
-            });
-            localStorage.setItem('logs', JSON.stringify(logs));
-            document.getElementById('custom-alert').style.display = 'block';
+            // إضافة الإجابة لآخر سؤال في الأرشيف
+            if(archive.length > 0) {
+                archive[archive.length - 1].logs.push({
+                    user: localStorage.getItem('user'),
+                    choiceText: currentQ.ans[idx-1],
+                    isCorrect: (idx == currentQ.correct)
+                });
+                localStorage.setItem('archive', JSON.stringify(archive));
+            }
+            alert("تم تسجيل إجابتك!");
         }
 
-        function loadAdminLogs() {
-            const logs = JSON.parse(localStorage.getItem('logs') || "[]");
-            document.getElementById('logs-body').innerHTML = logs.map(l => {
-                const statusClass = l.isCorrect ? 'tag-correct' : 'tag-wrong';
-                const statusText = l.isCorrect ? 'صح' : 'خطأ';
-                return `<tr>
-                    <td style="padding:10px;">${l.user}</td>
-                    <td><span class="log-tag ${statusClass}">${l.ansText}</span></td>
-                    <td>${statusText}</td>
-                </tr>`;
-            }).join('');
+        function renderArchive() {
+            const archive = JSON.parse(localStorage.getItem('archive') || "[]");
+            const display = document.getElementById('archive-display');
+            display.innerHTML = archive.map((item, index) => `
+                <div class="session-block">
+                    <button class="delete-btn" onclick="deleteSession(${index})">حذف السؤال وسجله 🗑️</button>
+                    <strong>السؤال: ${item.text}</strong>
+                    <div style="font-size:12px; margin-top:10px;">
+                        ${item.logs.length === 0 ? 'لا توجد إجابات بعد' : item.logs.map(l => `
+                            <p style="color:${l.isCorrect ? '#28a745' : '#ff4d4d'}">${l.user}: ${l.choiceText}</p>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteSession(index) {
+            if(confirm("هل أنت متأكد من حذف هذا السؤال وكل الإيميلات التي سجلت فيه؟")) {
+                let archive = JSON.parse(localStorage.getItem('archive') || "[]");
+                archive.splice(index, 1);
+                localStorage.setItem('archive', JSON.stringify(archive));
+                renderArchive();
+            }
         }
     </script>
 </body>
