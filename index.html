@@ -3,72 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مسابقة رمضان الاحترافية</title>
+    <title>مسابقة رمضان الاحترافية V3</title>
     <style>
-        * { box-sizing: border-box; }
-        body, html { 
-            margin: 0; padding: 0; height: 100%; width: 100%;
+        * {
+            box-sizing: border-box;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
             font-family: 'Segoe UI', sans-serif;
             background: url('background.jpg') no-repeat center center;
-            background-size: 100% 100%; 
-            display: flex; flex-direction: column; align-items: center;
+            background-size: 100% 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             overflow: hidden;
+            /* منع ظهور شريط التمرير */
         }
-        .logo { width: 120px; margin-top: 20px; z-index: 10; }
 
-        /* واجهة الاختيارات الأنيقة */
+        .logo {
+            width: 120px;
+            margin-top: 20px;
+            z-index: 10;
+        }
+
         #quiz-interface {
-            display: none; background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(10px); border: 2px solid #ffd700;
-            border-radius: 25px; padding: 30px; margin-top: 20px;
-            width: 85%; max-width: 450px; text-align: center; color: white;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+            display: none;
+            background: rgba(0, 0, 0, 0.8);
+            /* خلفية سوداء شفافة */
+            backdrop-filter: blur(5px);
+            border: 2px solid #ffd700;
+            border-radius: 25px;
+            padding: 30px 20px;
+            /* تقليل الحواشي الأفقية قليلاً */
+            margin-top: 20px;
+            width: 90%;
+            /* أوسع قليلاً */
+            max-width: 500px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+            /* إضافة ظل ذهبي */
         }
-        .ans-btn {
-            width: 100%; padding: 15px; margin: 10px 0;
-            background: rgba(255, 255, 255, 0.05); border: 1px solid #ffd700;
-            color: white; border-radius: 12px; cursor: pointer; font-size: 18px;
-            transition: 0.3s;
-        }
-        .ans-btn:hover { background: #ffd700; color: black; box-shadow: 0 0 15px #ffd700; font-weight: bold; }
 
-        /* شاشة المطور */
+        #q-text {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px #000000;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            /* مسافة موحدة بين الأزرار */
+        }
+
+        .ans-btn {
+            width: 100%;
+            padding: 18px 15px;
+            /* حشوة أكبر قليلاً */
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #ffd700;
+            color: white;
+            border-radius: 15px;
+            /* زوايا أدق */
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            /* تأثير ناعم عند التمرير */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            text-shadow: 1px 1px 2px black;
+        }
+
+        .ans-btn:hover {
+            background: #ffd700;
+            color: black;
+            border-color: white;
+            transform: scale(1.02);
+            /* تكبير بسيط */
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        /* واجهة المطور */
         #admin-interface {
-            display: none; background: #0b101b; color: white;
-            width: 100%; height: 100vh; position: fixed; top: 0; left: 0;
-            padding: 20px; overflow-y: auto; z-index: 2000;
+            display: none;
+            background: #0b101b;
+            color: white;
+            width: 100%;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 20px;
+            overflow-y: auto;
+            z-index: 2000;
         }
-        .admin-box { background: #1a202c; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #ffd700; }
-        input { width: 100%; padding: 10px; margin: 5px 0; border-radius: 5px; border: none; }
-        .session-block { background: #2d3748; padding: 10px; margin-top: 15px; border-radius: 8px; border-right: 4px solid #ffd700; }
-        
-        /* شاشة الدخول */
+
+        .admin-box {
+            background: #1a202c;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ffd700;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .session-block {
+            background: #2d3748;
+            padding: 10px;
+            margin-top: 15px;
+            border-radius: 8px;
+            border-right: 4px solid #ffd700;
+            position: relative;
+            /* للحذف المطلق */
+        }
+
+        .delete-btn {
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+
         #login-screen {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
-            display: flex; justify-content: center; align-items: center; z-index: 3000;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
         }
-        .login-card { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 320px; }
+
+        .login-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid #ffd700;
+            padding: 40px 30px;
+            border-radius: 25px;
+            text-align: center;
+            width: 90%;
+            max-width: 350px;
+            color: white;
+        }
+
+        .login-box h3 {
+            color: #ffd700;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #ffd700;
+        }
+
+        .login-box input {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid #ffd700;
+            color: white;
+            padding: 15px;
+            border-radius: 30px;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        .login-box input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 15px;
+            background: #ffd700;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: black;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .login-box button:hover {
+            background: #ffed4e;
+            transform: scale(1.03);
+            box-shadow: 0 0 20px #ffd700;
+        }
     </style>
 </head>
+
 <body>
 
-    <audio id="bg-music" preload="auto">
-        <source src="music.mp3" type="audio/mpeg">
-    </audio>
-
-    <img src="loge.png" class="logo">
+    <img src="loge.png" class="logo" alt="Logo">
 
     <div id="login-screen">
-        <div class="login-card">
-            <h3 style="color:black; margin-bottom:20px;">رمضان كريم 🌙</h3>
-            <input type="email" id="email-input" placeholder="أدخل بريدك الإلكتروني">
-            <button onclick="checkAccess()" style="width:100%; padding:12px; background:#ffd700; border:none; border-radius:8px; font-weight:bold; cursor:pointer; margin-top:10px;">دخول المسابقة</button>
+        <div class="login-box">
+            <h3>رمضان كريم</h3>
+            <input type="email" id="email-input" placeholder="اكتب إيميلك">
+            <button onclick="checkAccess()">دخول</button>
         </div>
     </div>
 
     <div id="quiz-interface">
-        <h2 id="q-text" style="color:#ffd700; margin-bottom:25px;">تحميل السؤال...</h2>
-        <div id="options-box">
+        <h2 id="q-text">تحميل...</h2>
+        <div class="options-container" id="options-box">
             <button class="ans-btn" id="btn1" onclick="submitAns(1)"></button>
             <button class="ans-btn" id="btn2" onclick="submitAns(2)"></button>
             <button class="ans-btn" id="btn3" onclick="submitAns(3)"></button>
@@ -77,47 +232,113 @@
     </div>
 
     <div id="admin-interface">
-        <h2 style="color:#ffd700">⚙️ لوحة المطور - إدارة الأرشيف</h2>
+        <h2 style="color:#ffd700">⚙️ لوحة التحكم - أرشيف الأسئلة</h2>
         <div class="admin-box">
-            <h4>إضافة سؤال جديد:</h4>
-            <input type="text" id="edit-q" placeholder="نص السؤال">
-            <input type="text" id="edit-a1" placeholder="خيار 1">
-            <input type="text" id="edit-a2" placeholder="خيار 2">
-            <input type="text" id="edit-a3" placeholder="خيار 3">
-            <input type="text" id="edit-a4" placeholder="خيار 4">
-            <input type="number" id="edit-correct" placeholder="رقم الإجابة الصحيحة (1-4)">
-            <button onclick="createNewQuestion()" style="width:100%; padding:12px; background:green; color:white; font-weight:bold; margin-top:15px; border:none; border-radius:8px; cursor:pointer;">تثبيت السؤال الجديد</button>
+            <h4>إضافة سؤال جديد (سيبدأ أرشيف جديد):</h4>
+            <input type="text" id="edit-q" placeholder="السؤال">
+            <input type="text" id="edit-a1" placeholder="إجابة 1">
+            <input type="text" id="edit-a2" placeholder="إجابة 2">
+            <input type="text" id="edit-a3" placeholder="إجابة 3">
+            <input type="text" id="edit-a4" placeholder="إجابة 4">
+            <input type="number" id="edit-correct" placeholder="رقم الإجابة الصح (1-4)">
+            <button onclick="createNewQuestion()" style="width:100%; padding:12px; background:green; color:white; font-weight:bold; margin-top:10px; cursor:pointer;">حفظ وتفعيل السؤال الجديد</button>
         </div>
+
+        <h3>🗄️ الأرشيف (كل سؤال بإجاباته):</h3>
         <div id="archive-display"></div>
-        <button onclick="location.reload()" style="background:red; color:white; padding:10px 20px; border:none; border-radius:8px; margin-top:20px; cursor:pointer;">تسجيل الخروج</button>
+        <button onclick="location.reload()" style="background:red; color:white; padding:10px; margin-top:20px;">خروج</button>
     </div>
 
     <script>
         const ADMIN_EMAIL = "admin@ramadan.com";
-        const music = document.getElementById('bg-music');
+        let audioContext = null;
+        let isAudioInitialized = false;
 
-        // برمجة تكرار أول 5 ثوانٍ فقط للأبد
-        music.ontimeupdate = function() {
-            if (music.currentTime >= 5) {
-                music.currentTime = 0;
-                music.play();
+        // محاولة تهيئة الصوت عند تفاعل المستخدم مع الصفحة
+        function initAudio() {
+            if (isAudioInitialized) return;
+
+            // إنشاء AudioContext (سيتم تفعيله عند الضغط على زر)
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            isAudioInitialized = true;
+            console.log("AudioContext initialized");
+        }
+
+        // تشغيل الموسيقى (أول 5 ثواني مكررة)
+        async function playMusic() {
+            if (!audioContext) {
+                initAudio();
             }
-        };
+
+            // إذا كان الصوت قيد التشغيل بالفعل، لا تفعل شيئاً
+            if (audioContext.state === 'closed' || audioContext.state === 'suspended') {
+                await audioContext.resume();
+            }
+
+            try {
+                // جلب ملف الصوت
+                const response = await fetch('music.mp3');
+                const arrayBuffer = await response.arrayBuffer();
+                const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+                // تحديد مدة 5 ثواني (أو المدة المتاحة إذا كانت أقل)
+                const duration = Math.min(5, audioBuffer.duration);
+                // حساب عدد العينات المطلوبة للمدة المحددة
+                const sampleRate = audioBuffer.sampleRate;
+                const samplesNeeded = duration * sampleRate;
+                
+                // إنشاء buffer جديد للمقطع المقتطع
+                const trimmedBuffer = audioContext.createBuffer(
+                    audioBuffer.numberOfChannels,
+                    samplesNeeded,
+                    sampleRate
+                );
+
+                // نسخ البيانات من الـ buffer الأصلي إلى الجديد
+                for (let channel = 0; channel < audioBuffer.numberOfChannels; channel++) {
+                    const originalData = audioBuffer.getChannelData(channel);
+                    const trimmedData = trimmedBuffer.getChannelData(channel);
+                    for (let i = 0; i < samplesNeeded; i++) {
+                        trimmedData[i] = originalData[i];
+                    }
+                }
+
+                // إنشاء مصدر الصوت
+                const source = audioContext.createBufferSource();
+                source.buffer = trimmedBuffer;
+                source.loop = true; // تفعيل التكرار
+                source.connect(audioContext.destination);
+                source.start();
+
+                console.log(`تشغيل أول ${duration} ثواني من الموسيقى في حلقة لا نهائية.`);
+
+            } catch (error) {
+                console.error("خطأ في تحميل أو تشغيل الموسيقى:", error);
+            }
+        }
 
         window.onload = function() {
             loadCurrentQuestion();
-            // محاولة تشغيل الموسيقى فور التحميل (قد تتطلب تفاعل المستخدم أولاً في بعض المتصفحات)
-            document.body.addEventListener('click', () => music.play(), { once: true });
+
+            // إضافة مستمع لبدء الصوت عند أول تفاعل (مثل النقر على الشاشة)
+            document.body.addEventListener('click', function initOnFirstClick() {
+                initAudio();
+                document.body.removeEventListener('click', initOnFirstClick);
+            }, { once: true });
         };
 
-        function checkAccess() {
+        async function checkAccess() {
             const email = document.getElementById('email-input').value;
-            if(!email) return alert("يرجى إدخال الإيميل أولاً");
-            
-            music.play(); // التأكد من تشغيل الموسيقى عند الضغط
-            document.getElementById('login-screen').style.display = 'none';
+            if (!email) return;
 
-            if(email === ADMIN_EMAIL) {
+            // تهيئة الصوت وتشغيل الموسيقى (أول 5 ثواني مكررة)
+            if (!isAudioInitialized) {
+                initAudio();
+            }
+            await playMusic(); // تشغيل الموسيقى فور ظهور شاشة الإيميل
+
+            document.getElementById('login-screen').style.display = 'none';
+            if (email === ADMIN_EMAIL) {
                 document.getElementById('admin-interface').style.display = 'block';
                 renderArchive();
             } else {
@@ -149,28 +370,33 @@
                     document.getElementById('edit-a3').value,
                     document.getElementById('edit-a4').value
                 ],
-                correct: document.getElementById('edit-correct').value
+                correct: parseInt(document.getElementById('edit-correct').value)
             };
             localStorage.setItem('current_q', JSON.stringify(newQ));
+
+            // إضافة السؤال للأرشيف
             let archive = JSON.parse(localStorage.getItem('archive') || "[]");
             archive.push({ ...newQ, logs: [] });
             localStorage.setItem('archive', JSON.stringify(archive));
-            alert("تم تفعيل السؤال وأرشفة البيانات بنجاح!");
+
+            alert("تم تفعيل السؤال الجديد!");
             location.reload();
         }
 
         function submitAns(idx) {
             const currentQ = JSON.parse(localStorage.getItem('current_q'));
             let archive = JSON.parse(localStorage.getItem('archive') || "[]");
-            if(archive.length > 0) {
+
+            // إضافة الإجابة لآخر سؤال في الأرشيف
+            if (archive.length > 0) {
                 archive[archive.length - 1].logs.push({
                     user: localStorage.getItem('user'),
-                    choiceText: currentQ.ans[idx-1],
+                    choiceText: currentQ.ans[idx - 1],
                     isCorrect: (idx == currentQ.correct)
                 });
                 localStorage.setItem('archive', JSON.stringify(archive));
             }
-            alert("تم تسجيل إجابتك بنجاح! شكراً لمشاركتك.");
+            alert("تم تسجيل إجابتك!");
         }
 
         function renderArchive() {
@@ -178,17 +404,19 @@
             const display = document.getElementById('archive-display');
             display.innerHTML = archive.map((item, index) => `
                 <div class="session-block">
-                    <button style="background:red; color:white; border:none; float:left; padding:5px; border-radius:4px; cursor:pointer;" onclick="deleteSession(${index})">حذف السجل 🗑️</button>
+                    <button class="delete-btn" onclick="deleteSession(${index})">🗑️ حذف</button>
                     <strong>السؤال: ${item.text}</strong>
                     <div style="font-size:12px; margin-top:10px;">
-                        ${item.logs.map(l => `<p style="color:${l.isCorrect ? '#28a745' : '#ff4d4d'}">${l.user}: ${l.choiceText}</p>`).join('')}
+                        ${item.logs.length === 0 ? 'لا توجد إجابات بعد' : item.logs.map(l => `
+                            <p style="color:${l.isCorrect ? '#28a745' : '#ff4d4d'}">${l.user}: ${l.choiceText}</p>
+                        `).join('')}
                     </div>
                 </div>
             `).join('');
         }
 
         function deleteSession(index) {
-            if(confirm("هل تريد حذف هذا السؤال بكل سجلات الإيميلات؟")) {
+            if (confirm("هل أنت متأكد من حذف هذا السؤال وكل الإيميلات التي سجلت فيه؟")) {
                 let archive = JSON.parse(localStorage.getItem('archive') || "[]");
                 archive.splice(index, 1);
                 localStorage.setItem('archive', JSON.stringify(archive));
@@ -197,4 +425,5 @@
         }
     </script>
 </body>
+
 </html>
