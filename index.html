@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>مسابقة رمضان التفاعلية</title>
+    <style>
+        /* إعدادات الخلفية اللي أنت هتحطها */
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('background.jpg') no-repeat center center fixed;
+            background-size: cover; /* عشان صورتك تملى الشاشة بأعلى جودة */
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* مكان اللوجو بتاعك */
+        .logo-container {
+            margin-top: 20px;
+            width: 150px; /* تحكم في حجم اللوجو من هنا */
+        }
+        .logo-container img { width: 100%; height: auto; }
+
+        /* حاوية السؤال والاجابات */
+        .quiz-container {
+            background: rgba(0, 0, 0, 0.7); /* طبقة شفافة عشان الكلام يبان فوق صورتك */
+            backdrop-filter: blur(5px);
+            padding: 30px;
+            border-radius: 20px;
+            border: 2px solid #ffd700;
+            margin-top: 50px;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            color: white;
+        }
+
+        .answer-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: transparent;
+            border: 1px solid #ffd700;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: 0.3s;
+        }
+        .answer-btn:hover { background: #ffd700; color: black; box-shadow: 0 0 15px #ffd700; }
+
+        /* لوحة المطور المستخبية */
+        #dev-panel {
+            display: none;
+            position: fixed;
+            top: 10%;
+            background: white;
+            color: black;
+            padding: 20px;
+            border-radius: 15px;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="logo-container">
+        <img src="logo.png" alt="Logo">
+    </div>
+
+    <div class="quiz-container">
+        <h2 id="q-text">السؤال يظهر هنا</h2>
+        <div id="options">
+            <button class="answer-btn" onclick="check(1)">إجابة 1</button>
+            <button class="answer-btn" onclick="check(2)">إجابة 2</button>
+            <button class="answer-btn" onclick="check(3)">إجابة 3</button>
+            <button class="answer-btn" onclick="check(4)">إجابة 4</button>
+        </div>
+        
+        <input type="text" id="dev-email" placeholder="أدخل الإيميل..." oninput="checkDev()" style="margin-top:20px; background:none; border:1px solid #333; color:gray; font-size:10px; text-align:center;">
+    </div>
+
+    <div id="dev-panel">
+        <h3>منظور المطور</h3>
+        <input type="text" id="edit-q" placeholder="تعديل السؤال">
+        <button onclick="saveChanges()">حفظ</button>
+        <hr>
+        <h4>سجل الإجابات:</h4>
+        <div id="log-display"></div>
+    </div>
+
+    <script>
+        // إيميل المطور الوهمي اللي بيفتح المنظور
+        const DEV_EMAIL = "dev@gemini.com";
+
+        function checkDev() {
+            if(document.getElementById('dev-email').value === DEV_EMAIL) {
+                document.getElementById('dev-panel').style.display = 'block';
+            }
+        }
+
+        function check(idx) {
+            alert("تم تسجيل إجابتك!");
+            let logs = JSON.parse(localStorage.getItem('user_logs') || "[]");
+            logs.push({ time: new Date().toLocaleTimeString(), choice: idx });
+            localStorage.setItem('user_logs', JSON.stringify(logs));
+        }
+
+        function saveChanges() {
+            document.getElementById('q-text').innerText = document.getElementById('edit-q').value;
+            alert("تم التحديث!");
+        }
+    </script>
+</body>
+</html>
+
