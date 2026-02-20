@@ -3,160 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مسابقة رمضان - النسخة النهائية</title>
+    <title>مسابقة رمضان - منظور المطور المتقدم</title>
     <style>
         * { box-sizing: border-box; }
         body, html { 
             margin: 0; padding: 0; height: 100%; width: 100%;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            /* الخلفية تظهر كاملة بدون زوم */
+            font-family: 'Segoe UI', sans-serif;
             background: url('background.jpg') no-repeat center center;
             background-size: 100% 100%; 
             display: flex; flex-direction: column; align-items: center;
             overflow: hidden;
         }
 
-        /* اللوجو بالاسم الجديد loge.png */
-        .logo { width: 140px; margin-top: 20px; z-index: 10; }
+        .logo { width: 120px; margin-top: 20px; z-index: 10; }
 
-        /* واجهة السؤال والاجابات */
+        /* واجهة المسابقة */
         #quiz-interface {
-            display: none; 
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(10px);
-            border: 2px solid #ffd700;
-            border-radius: 25px;
-            padding: 30px; margin-top: 30px;
+            display: none; background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px); border: 2px solid #ffd700;
+            border-radius: 25px; padding: 30px; margin-top: 20px;
             width: 85%; max-width: 450px; text-align: center; color: white;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .ans-btn {
             width: 100%; padding: 15px; margin: 8px 0;
             background: rgba(255, 255, 255, 0.05); border: 1px solid #ffd700;
-            color: white; border-radius: 12px; cursor: pointer;
-            font-size: 18px; transition: 0.3s;
+            color: white; border-radius: 12px; cursor: pointer; font-size: 18px;
         }
-        .ans-btn:hover { background: #ffd700; color: black; font-weight: bold; }
 
-        /* منظور المطور - واجهة كاملة جديدة */
+        #custom-alert {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: #0b0f19; border: 2px solid #ffd700; padding: 20px; border-radius: 15px;
+            z-index: 5000; text-align: center; color: white; box-shadow: 0 0 30px #ffd700;
+        }
+
+        /* واجهة المطور المطورة */
         #admin-interface {
             display: none; background: #0b0f19; color: white;
             width: 100%; height: 100vh; position: fixed; top: 0; left: 0;
-            padding: 30px; overflow-y: auto; z-index: 2000;
+            padding: 20px; overflow-y: auto; z-index: 2000;
         }
 
-        /* نافذة تسجيل الإيميل عند البداية */
+        .admin-box { background: #1a202c; padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #444; }
+        input { width: 100%; padding: 10px; margin: 5px 0; border-radius: 5px; border: none; }
+        
+        /* تنسيق جدول النتائج الجديد */
+        .log-tag { padding: 5px 10px; border-radius: 5px; font-weight: bold; color: white; display: inline-block; }
+        .tag-correct { background-color: #28a745; border: 1px solid #1e7e34; } /* أخضر للإجابة الصح */
+        .tag-wrong { background-color: #dc3545; border: 1px solid #bd2130; } /* أحمر للإجابة الغلط */
+
         #login-screen {
             position: fixed; inset: 0; background: rgba(0,0,0,0.95);
             display: flex; justify-content: center; align-items: center; z-index: 3000;
         }
-        .login-card { background: #fff; padding: 40px; border-radius: 20px; text-align: center; width: 320px; color: #333; }
-        .login-card input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ddd; border-radius: 8px; }
-
-        .admin-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #1a202c; }
-        .admin-table th, .admin-table td { padding: 12px; border: 1px solid #333; text-align: center; }
     </style>
 </head>
 <body>
 
-    <img src="loge.png" class="logo" alt="Logo">
+    <img src="loge.png" class="logo">
 
     <div id="login-screen">
-        <div class="login-card">
-            <h2 style="margin:0">أهلاً بك</h2>
-            <p style="color:#666; font-size:14px">سجل إيميلك للمشاركة في المسابقة</p>
-            <input type="email" id="email-input" placeholder="بريدك الإلكتروني">
-            <button onclick="checkAccess()" style="width:100%; padding:12px; background:#ffd700; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">دخول وحفظ</button>
+        <div style="background:white; padding:30px; border-radius:15px; text-align:center; width:300px;">
+            <h3 style="color:black">تسجيل الدخول</h3>
+            <input type="email" id="email-input" placeholder="اكتب إيميلك">
+            <button onclick="checkAccess()" style="width:100%; padding:12px; background:#ffd700; border:none; cursor:pointer; font-weight:bold;">دخول</button>
         </div>
     </div>
 
     <div id="quiz-interface">
-        <h2 id="current-question">ما هي السورة التي فرض فيها الصيام؟</h2>
-        <div id="answer-options">
-            <button class="ans-btn" onclick="submitAns(1)">1- البقرة</button>
-            <button class="ans-btn" onclick="submitAns(2)">2- الماعون</button>
-            <button class="ans-btn" onclick="submitAns(3)">3- الأنفال</button>
-            <button class="ans-btn" onclick="submitAns(4)">4- المائدة</button>
+        <h2 id="q-text">تحميل السؤال...</h2>
+        <div id="options-box">
+            <button class="ans-btn" id="btn1" onclick="submitAns(1)"></button>
+            <button class="ans-btn" id="btn2" onclick="submitAns(2)"></button>
+            <button class="ans-btn" id="btn3" onclick="submitAns(3)"></button>
+            <button class="ans-btn" id="btn4" onclick="submitAns(4)"></button>
         </div>
+    </div>
+
+    <div id="custom-alert">
+        <h3 style="color:#ffd700">تقبل الله طاعتكم 🌙</h3>
+        <p>تم تسجيل إجابتك بنجاح!</p>
+        <button onclick="document.getElementById('custom-alert').style.display='none'" style="background:#ffd700; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;">إغلاق</button>
     </div>
 
     <div id="admin-interface">
-        <h1 style="color:#ffd700">⚙️ منظور المطور لإدارة المسابقة</h1>
-        <div style="background:#1a202c; padding:20px; border-radius:15px; border-left: 5px solid #ffd700;">
-            <h3>تعديل السؤال الحالي:</h3>
-            <input type="text" id="new-question-input" style="width:70%; padding:10px; border-radius:5px; border:none;">
-            <button onclick="updateQuestion()" style="padding:10px 20px; background:green; color:white; border:none; border-radius:5px; cursor:pointer; margin-right:10px;">تحديث الآن</button>
+        <h2 style="color:#ffd700">⚙️ منظور المطور لإدارة المسابقة</h2>
+        <div class="admin-box">
+            <h4>إعداد السؤال والحل الصحيح:</h4>
+            <input type="text" id="edit-q" placeholder="السؤال">
+            <input type="text" id="edit-a1" placeholder="إجابة 1">
+            <input type="text" id="edit-a2" placeholder="إجابة 2">
+            <input type="text" id="edit-a3" placeholder="إجابة 3">
+            <input type="text" id="edit-a4" placeholder="إجابة 4">
+            <p style="margin: 10px 0 5px;">رقم الإجابة الصحيحة (1-4):</p>
+            <input type="number" id="edit-correct" min="1" max="4" placeholder="مثال: 1">
+            <button onclick="saveAll()" style="width:100%; padding:12px; background:green; color:white; border:none; margin-top:15px; cursor:pointer; font-weight:bold;">حفظ التعديلات النهائية</button>
         </div>
 
-        <h3 style="margin-top:40px;">سجل المتسابقين والإجابات القديمة:</h3>
-        <table class="admin-table">
-            <thead>
-                <tr style="background:#2d3748">
-                    <th>المتسابق (Email)</th>
-                    <th>التوقيت</th>
-                    <th>الإجابة المختارة</th>
-                </tr>
-            </thead>
+        <h3>سجل المتسابقين والنتائج:</h3>
+        <table border="1" style="width:100%; background:#1a202c; text-align:center; border-collapse: collapse;">
+            <thead><tr style="background:#2d3748"><th>المتسابق</th><th>الإجابة المختارة</th><th>الحالة</th></tr></thead>
             <tbody id="logs-body"></tbody>
         </table>
-        <br>
-        <button onclick="location.reload()" style="background:red; color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;">خروج من منظور المطور</button>
+        <button onclick="location.reload()" style="margin-top:20px; background:red; color:white; border:none; padding:10px 20px; cursor:pointer; border-radius:5px;">تسجيل خروج</button>
     </div>
 
     <script>
-        // الإيميل الوهمي الذي يفتح منظور المطور
-        const ADMIN_EMAIL = "admin@ramadan.com"; 
+        const ADMIN_EMAIL = "admin@ramadan.com";
+
+        window.onload = function() {
+            // استرجاع البيانات المخزنة
+            const savedQ = localStorage.getItem('quiz_q') || "السؤال الافتراضي؟";
+            const savedA1 = localStorage.getItem('quiz_a1') || "إجابة 1";
+            const savedA2 = localStorage.getItem('quiz_a2') || "إجابة 2";
+            const savedA3 = localStorage.getItem('quiz_a3') || "إجابة 3";
+            const savedA4 = localStorage.getItem('quiz_a4') || "إجابة 4";
+            const savedCorrect = localStorage.getItem('quiz_correct') || "1";
+
+            document.getElementById('q-text').innerText = savedQ;
+            document.getElementById('btn1').innerText = savedA1;
+            document.getElementById('btn2').innerText = savedA2;
+            document.getElementById('btn3').innerText = savedA3;
+            document.getElementById('btn4').innerText = savedA4;
+
+            // تعبئة الخانات في لوحة المطور لسهولة التعديل
+            document.getElementById('edit-q').value = savedQ;
+            document.getElementById('edit-a1').value = savedA1;
+            document.getElementById('edit-a2').value = savedA2;
+            document.getElementById('edit-a3').value = savedA3;
+            document.getElementById('edit-a4').value = savedA4;
+            document.getElementById('edit-correct').value = savedCorrect;
+        };
 
         function checkAccess() {
             const email = document.getElementById('email-input').value;
-            if(!email) return alert("من فضلك اكتب الإيميل أولاً");
-
+            if(!email) return alert("اكتب الإيميل");
             document.getElementById('login-screen').style.display = 'none';
-
             if(email === ADMIN_EMAIL) {
-                // فتح واجهة المطور
                 document.getElementById('admin-interface').style.display = 'block';
-                showAdminLogs();
+                loadAdminLogs();
             } else {
-                // فتح واجهة المسابقة العادية
                 document.getElementById('quiz-interface').style.display = 'block';
-                localStorage.setItem('currentUser', email);
+                localStorage.setItem('user', email);
             }
         }
 
-        function submitAns(choice) {
-            const userEmail = localStorage.getItem('currentUser');
-            let allLogs = JSON.parse(localStorage.getItem('contest_data') || "[]");
+        function saveAll() {
+            localStorage.setItem('quiz_q', document.getElementById('edit-q').value);
+            localStorage.setItem('quiz_a1', document.getElementById('edit-a1').value);
+            localStorage.setItem('quiz_a2', document.getElementById('edit-a2').value);
+            localStorage.setItem('quiz_a3', document.getElementById('edit-a3').value);
+            localStorage.setItem('quiz_a4', document.getElementById('edit-a4').value);
+            localStorage.setItem('quiz_correct', document.getElementById('edit-correct').value);
+            alert("تم التثبيت بنجاح!");
+            location.reload();
+        }
+
+        function submitAns(idx) {
+            let logs = JSON.parse(localStorage.getItem('logs') || "[]");
+            // حفظ نص الإجابة المختارة وليس الرقم فقط
+            const chosenText = localStorage.getItem('quiz_a' + idx);
+            const correctNum = localStorage.getItem('quiz_correct');
             
-            allLogs.push({
-                user: userEmail,
-                time: new Date().toLocaleString('ar-EG'),
-                choice: choice
+            logs.push({ 
+                user: localStorage.getItem('user'), 
+                ansText: chosenText,
+                isCorrect: (idx == correctNum) 
             });
-            
-            localStorage.setItem('contest_data', JSON.stringify(allLogs));
-            alert("تم تسجيل إجابتك بنجاح! شكراً لمشاركتك.");
+            localStorage.setItem('logs', JSON.stringify(logs));
+            document.getElementById('custom-alert').style.display = 'block';
         }
 
-        function showAdminLogs() {
-            const data = JSON.parse(localStorage.getItem('contest_data') || "[]");
-            const tableBody = document.getElementById('logs-body');
-            tableBody.innerHTML = data.map(item => `
-                <tr>
-                    <td>${item.user}</td>
-                    <td>${item.time}</td>
-                    <td>خيار رقم ${item.choice}</td>
-                </tr>
-            `).join('');
-        }
-
-        function updateQuestion() {
-            const newQ = document.getElementById('new-question-input').value;
-            if(newQ) {
-                document.getElementById('current-question').innerText = newQ;
-                alert("تم تغيير السؤال بنجاح!");
-            }
+        function loadAdminLogs() {
+            const logs = JSON.parse(localStorage.getItem('logs') || "[]");
+            document.getElementById('logs-body').innerHTML = logs.map(l => {
+                const statusClass = l.isCorrect ? 'tag-correct' : 'tag-wrong';
+                const statusText = l.isCorrect ? 'صح' : 'خطأ';
+                return `<tr>
+                    <td style="padding:10px;">${l.user}</td>
+                    <td><span class="log-tag ${statusClass}">${l.ansText}</span></td>
+                    <td>${statusText}</td>
+                </tr>`;
+            }).join('');
         }
     </script>
 </body>
