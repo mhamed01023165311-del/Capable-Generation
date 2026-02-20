@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مسابقة رمضان الاحترافية V3</title>
+    <title>مسابقة رمضان الاحترافية</title>
     <style>
         * { box-sizing: border-box; }
         body, html { 
@@ -15,18 +15,24 @@
             overflow: hidden;
         }
         .logo { width: 120px; margin-top: 20px; z-index: 10; }
+
+        /* واجهة الاختيارات الأنيقة */
         #quiz-interface {
             display: none; background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(10px); border: 2px solid #ffd700;
             border-radius: 25px; padding: 30px; margin-top: 20px;
             width: 85%; max-width: 450px; text-align: center; color: white;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
         }
         .ans-btn {
-            width: 100%; padding: 15px; margin: 8px 0;
+            width: 100%; padding: 15px; margin: 10px 0;
             background: rgba(255, 255, 255, 0.05); border: 1px solid #ffd700;
             color: white; border-radius: 12px; cursor: pointer; font-size: 18px;
+            transition: 0.3s;
         }
-        /* واجهة المطور */
+        .ans-btn:hover { background: #ffd700; color: black; box-shadow: 0 0 15px #ffd700; font-weight: bold; }
+
+        /* شاشة المطور */
         #admin-interface {
             display: none; background: #0b101b; color: white;
             width: 100%; height: 100vh; position: fixed; top: 0; left: 0;
@@ -35,31 +41,33 @@
         .admin-box { background: #1a202c; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #ffd700; }
         input { width: 100%; padding: 10px; margin: 5px 0; border-radius: 5px; border: none; }
         .session-block { background: #2d3748; padding: 10px; margin-top: 15px; border-radius: 8px; border-right: 4px solid #ffd700; }
-        .delete-btn { background: #ff4d4d; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; float: left; }
+        
+        /* شاشة الدخول */
         #login-screen {
             position: fixed; inset: 0; background: rgba(0,0,0,0.95);
             display: flex; justify-content: center; align-items: center; z-index: 3000;
         }
+        .login-card { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 320px; }
     </style>
 </head>
 <body>
 
-    <audio id="bg-music" loop>
+    <audio id="bg-music" preload="auto">
         <source src="music.mp3" type="audio/mpeg">
     </audio>
 
     <img src="loge.png" class="logo">
 
     <div id="login-screen">
-        <div style="background:white; padding:30px; border-radius:15px; text-align:center; width:300px;">
-            <h3 style="color:black">رمضان كريم</h3>
-            <input type="email" id="email-input" placeholder="اكتب إيميلك">
-            <button onclick="checkAccess()" style="width:100%; padding:12px; background:#ffd700; font-weight:bold; cursor:pointer;">دخول</button>
+        <div class="login-card">
+            <h3 style="color:black; margin-bottom:20px;">رمضان كريم 🌙</h3>
+            <input type="email" id="email-input" placeholder="أدخل بريدك الإلكتروني">
+            <button onclick="checkAccess()" style="width:100%; padding:12px; background:#ffd700; border:none; border-radius:8px; font-weight:bold; cursor:pointer; margin-top:10px;">دخول المسابقة</button>
         </div>
     </div>
 
     <div id="quiz-interface">
-        <h2 id="q-text">تحميل...</h2>
+        <h2 id="q-text" style="color:#ffd700; margin-bottom:25px;">تحميل السؤال...</h2>
         <div id="options-box">
             <button class="ans-btn" id="btn1" onclick="submitAns(1)"></button>
             <button class="ans-btn" id="btn2" onclick="submitAns(2)"></button>
@@ -69,38 +77,46 @@
     </div>
 
     <div id="admin-interface">
-        <h2 style="color:#ffd700">⚙️ لوحة التحكم - أرشيف الأسئلة</h2>
+        <h2 style="color:#ffd700">⚙️ لوحة المطور - إدارة الأرشيف</h2>
         <div class="admin-box">
-            <h4>إضافة سؤال جديد (سيبدأ أرشيف جديد):</h4>
-            <input type="text" id="edit-q" placeholder="السؤال">
-            <input type="text" id="edit-a1" placeholder="إجابة 1">
-            <input type="text" id="edit-a2" placeholder="إجابة 2">
-            <input type="text" id="edit-a3" placeholder="إجابة 3">
-            <input type="text" id="edit-a4" placeholder="إجابة 4">
-            <input type="number" id="edit-correct" placeholder="رقم الإجابة الصح (1-4)">
-            <button onclick="createNewQuestion()" style="width:100%; padding:12px; background:green; color:white; font-weight:bold; margin-top:10px; cursor:pointer;">حفظ وتفعيل السؤال الجديد</button>
+            <h4>إضافة سؤال جديد:</h4>
+            <input type="text" id="edit-q" placeholder="نص السؤال">
+            <input type="text" id="edit-a1" placeholder="خيار 1">
+            <input type="text" id="edit-a2" placeholder="خيار 2">
+            <input type="text" id="edit-a3" placeholder="خيار 3">
+            <input type="text" id="edit-a4" placeholder="خيار 4">
+            <input type="number" id="edit-correct" placeholder="رقم الإجابة الصحيحة (1-4)">
+            <button onclick="createNewQuestion()" style="width:100%; padding:12px; background:green; color:white; font-weight:bold; margin-top:15px; border:none; border-radius:8px; cursor:pointer;">تثبيت السؤال الجديد</button>
         </div>
-
-        <h3>🗄️ الأرشيف (كل سؤال بإجاباته):</h3>
         <div id="archive-display"></div>
-        <button onclick="location.reload()" style="background:red; color:white; padding:10px; margin-top:20px;">خروج</button>
+        <button onclick="location.reload()" style="background:red; color:white; padding:10px 20px; border:none; border-radius:8px; margin-top:20px; cursor:pointer;">تسجيل الخروج</button>
     </div>
 
     <script>
         const ADMIN_EMAIL = "admin@ramadan.com";
+        const music = document.getElementById('bg-music');
+
+        // برمجة تكرار أول 5 ثوانٍ فقط للأبد
+        music.ontimeupdate = function() {
+            if (music.currentTime >= 5) {
+                music.currentTime = 0;
+                music.play();
+            }
+        };
 
         window.onload = function() {
             loadCurrentQuestion();
+            // محاولة تشغيل الموسيقى فور التحميل (قد تتطلب تفاعل المستخدم أولاً في بعض المتصفحات)
+            document.body.addEventListener('click', () => music.play(), { once: true });
         };
 
         function checkAccess() {
             const email = document.getElementById('email-input').value;
-            if(!email) return;
+            if(!email) return alert("يرجى إدخال الإيميل أولاً");
             
-            // تشغيل الموسيقى
-            document.getElementById('bg-music').play().catch(e => console.log("المتصفح منع التشغيل التلقائي"));
-            
+            music.play(); // التأكد من تشغيل الموسيقى عند الضغط
             document.getElementById('login-screen').style.display = 'none';
+
             if(email === ADMIN_EMAIL) {
                 document.getElementById('admin-interface').style.display = 'block';
                 renderArchive();
@@ -136,21 +152,16 @@
                 correct: document.getElementById('edit-correct').value
             };
             localStorage.setItem('current_q', JSON.stringify(newQ));
-            
-            // إضافة السؤال للأرشيف
             let archive = JSON.parse(localStorage.getItem('archive') || "[]");
             archive.push({ ...newQ, logs: [] });
             localStorage.setItem('archive', JSON.stringify(archive));
-            
-            alert("تم تفعيل السؤال الجديد!");
+            alert("تم تفعيل السؤال وأرشفة البيانات بنجاح!");
             location.reload();
         }
 
         function submitAns(idx) {
             const currentQ = JSON.parse(localStorage.getItem('current_q'));
             let archive = JSON.parse(localStorage.getItem('archive') || "[]");
-            
-            // إضافة الإجابة لآخر سؤال في الأرشيف
             if(archive.length > 0) {
                 archive[archive.length - 1].logs.push({
                     user: localStorage.getItem('user'),
@@ -159,7 +170,7 @@
                 });
                 localStorage.setItem('archive', JSON.stringify(archive));
             }
-            alert("تم تسجيل إجابتك!");
+            alert("تم تسجيل إجابتك بنجاح! شكراً لمشاركتك.");
         }
 
         function renderArchive() {
@@ -167,19 +178,17 @@
             const display = document.getElementById('archive-display');
             display.innerHTML = archive.map((item, index) => `
                 <div class="session-block">
-                    <button class="delete-btn" onclick="deleteSession(${index})">حذف السؤال وسجله 🗑️</button>
+                    <button style="background:red; color:white; border:none; float:left; padding:5px; border-radius:4px; cursor:pointer;" onclick="deleteSession(${index})">حذف السجل 🗑️</button>
                     <strong>السؤال: ${item.text}</strong>
                     <div style="font-size:12px; margin-top:10px;">
-                        ${item.logs.length === 0 ? 'لا توجد إجابات بعد' : item.logs.map(l => `
-                            <p style="color:${l.isCorrect ? '#28a745' : '#ff4d4d'}">${l.user}: ${l.choiceText}</p>
-                        `).join('')}
+                        ${item.logs.map(l => `<p style="color:${l.isCorrect ? '#28a745' : '#ff4d4d'}">${l.user}: ${l.choiceText}</p>`).join('')}
                     </div>
                 </div>
             `).join('');
         }
 
         function deleteSession(index) {
-            if(confirm("هل أنت متأكد من حذف هذا السؤال وكل الإيميلات التي سجلت فيه؟")) {
+            if(confirm("هل تريد حذف هذا السؤال بكل سجلات الإيميلات؟")) {
                 let archive = JSON.parse(localStorage.getItem('archive') || "[]");
                 archive.splice(index, 1);
                 localStorage.setItem('archive', JSON.stringify(archive));
