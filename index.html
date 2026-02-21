@@ -22,7 +22,7 @@
             overflow: hidden;
         }
 
-        /* فيديو الخلفية - هيشتغل لوحده ويتكرر للأبد */
+        /* فيديو الخلفية */
         #bg-video {
             position: fixed;
             top: 50%;
@@ -37,34 +37,34 @@
         }
 
         .logo {
-            width: 120px;
-            margin-top: 20px;
+            width: 100px;
+            margin-top: 15px;
             z-index: 10;
             position: relative;
             filter: drop-shadow(0 0 10px #ffd700);
         }
 
-        /* واجهة المسابقة */
+        /* واجهة المسابقة - مصغرة شوية */
         #quiz-interface {
             display: none;
             background: transparent;
             backdrop-filter: none;
             border: 2px solid rgba(255, 215, 0, 0.7);
-            border-radius: 25px;
-            padding: 30px 20px;
-            margin-top: 20px;
-            width: 90%;
-            max-width: 500px;
+            border-radius: 20px;
+            padding: 20px 15px;  /* تقليل الحشو */
+            margin-top: 10px;
+            width: 85%;  /* تصغير العرض */
+            max-width: 400px;  /* أقصى عرض أصغر */
             text-align: center;
             color: white;
-            box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
             position: relative;
             z-index: 10;
         }
 
         #q-text {
-            font-size: 2rem;
-            margin-bottom: 30px;
+            font-size: 1.6rem;  /* تصغير الخط */
+            margin-bottom: 20px;  /* تقليل المسافة */
             color: #ffd700;
             text-shadow: 
                 2px 2px 4px rgba(0, 0, 0, 0.8),
@@ -76,19 +76,19 @@
         .options-container {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 10px;  /* تقليل المسافة بين الأزرار */
+            margin-bottom: 0;
         }
 
         .ans-btn {
             width: 100%;
-            padding: 18px 15px;
+            padding: 12px 12px;  /* تقليل الحشو */
             background: rgba(0, 0, 0, 0.4);
             border: 2px solid rgba(255, 215, 0, 0.8);
             color: white;
-            border-radius: 15px;
+            border-radius: 12px;  /* تقليل الانحناء */
             cursor: pointer;
-            font-size: 1.3rem;
+            font-size: 1.1rem;  /* تصغير الخط */
             font-weight: bold;
             transition: all 0.3s ease;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
@@ -110,30 +110,31 @@
             box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
         }
 
-        /* أزرار التصنيف */
+        /* أزرار التصنيف - للمدير فقط */
         .classification-buttons {
-            display: flex;
-            gap: 15px;
+            display: none;  /* مخفية افتراضياً */
+            gap: 10px;
             justify-content: center;
-            margin-top: 20px;
-            opacity: 0;
-            animation: fadeInScale 0.8s ease-out forwards;
-            animation-delay: 1s;
+            margin-top: 15px;
+        }
+
+        .classification-buttons.show {
+            display: flex;  /* تظهر لما نضيف كلاس show */
         }
 
         .class-btn {
             flex: 1;
-            padding: 12px;
+            padding: 8px;
             border: none;
-            border-radius: 50px;
-            font-size: 1.1rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 5px;
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(5px);
             border: 2px solid;
@@ -147,7 +148,7 @@
 
         .correct-class:hover {
             background: rgba(40, 167, 69, 0.3);
-            transform: scale(1.05);
+            transform: scale(1.03);
             box-shadow: 0 0 30px #28a745;
         }
 
@@ -158,7 +159,7 @@
 
         .wrong-class:hover {
             background: rgba(220, 53, 69, 0.3);
-            transform: scale(1.05);
+            transform: scale(1.03);
             box-shadow: 0 0 30px #dc3545;
         }
 
@@ -173,10 +174,10 @@
             backdrop-filter: blur(10px);
             border: 2px solid #ffd700;
             border-radius: 20px;
-            padding: 25px;
+            padding: 20px;
             width: 90%;
-            max-width: 400px;
-            max-height: 80vh;
+            max-width: 350px;
+            max-height: 70vh;
             overflow-y: auto;
             z-index: 10000;
             color: white;
@@ -199,22 +200,22 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
             border-bottom: 2px solid #ffd700;
         }
 
         .modal-header h3 {
             margin: 0;
             color: #ffd700;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
         }
 
         .close-modal {
             background: none;
             border: none;
             color: #ffd700;
-            font-size: 2rem;
+            font-size: 1.8rem;
             cursor: pointer;
             padding: 0;
             line-height: 1;
@@ -232,12 +233,12 @@
         }
 
         .answer-item {
-            padding: 12px;
-            margin: 8px 0;
-            border-radius: 10px;
+            padding: 10px;
+            margin: 6px 0;
+            border-radius: 8px;
             background: rgba(255, 255, 255, 0.1);
             border-right: 4px solid;
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
 
         .answer-item.correct-item {
@@ -253,20 +254,21 @@
         .answer-item .user-email {
             font-weight: bold;
             color: #ffd700;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
             word-break: break-all;
+            font-size: 0.9rem;
         }
 
         .answer-item .user-choice {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             opacity: 0.9;
         }
 
         .no-answers {
             text-align: center;
-            padding: 30px;
+            padding: 20px;
             color: #888;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
         /* أنيميشن الظهور */
@@ -293,33 +295,35 @@
             position: fixed;
             top: 0;
             left: 0;
-            padding: 20px;
+            padding: 15px;
             overflow-y: auto;
             z-index: 2000;
         }
 
         .admin-box {
             background: #1a202c;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 20px;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
             border: 1px solid #ffd700;
         }
 
         .admin-box h4 {
             color: #ffd700;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            font-size: 1rem;
         }
 
         input {
             width: 100%;
-            padding: 10px;
-            margin: 5px 0;
+            padding: 8px;
+            margin: 4px 0;
             border-radius: 5px;
             border: none;
             background: #2d3748;
             color: white;
             border: 1px solid #4a5568;
+            font-size: 0.9rem;
         }
 
         input:focus {
@@ -329,8 +333,8 @@
 
         .session-block {
             background: #2d3748;
-            padding: 15px;
-            margin-top: 15px;
+            padding: 12px;
+            margin-top: 12px;
             border-radius: 8px;
             border-right: 4px solid #ffd700;
             position: relative;
@@ -340,12 +344,13 @@
             background: #ff4d4d;
             color: white;
             border: none;
-            padding: 5px 10px;
+            padding: 4px 8px;
             cursor: pointer;
             border-radius: 4px;
             position: absolute;
-            top: 10px;
-            left: 10px;
+            top: 8px;
+            left: 8px;
+            font-size: 0.8rem;
             transition: all 0.3s ease;
         }
 
@@ -369,19 +374,19 @@
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(5px);
             border: 2px solid #ffd700;
-            padding: 40px 30px;
-            border-radius: 25px;
+            padding: 30px 20px;
+            border-radius: 20px;
             text-align: center;
             width: 90%;
-            max-width: 350px;
+            max-width: 300px;
             color: white;
             animation: modalPop 0.5s ease-out;
         }
 
         .login-box h3 {
             color: #ffd700;
-            font-size: 2rem;
-            margin-bottom: 20px;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
             text-shadow: 0 0 10px #ffd700;
         }
 
@@ -389,12 +394,12 @@
             background: rgba(255, 255, 255, 0.2);
             border: 1px solid #ffd700;
             color: white;
-            padding: 15px;
-            border-radius: 30px;
-            font-size: 1rem;
+            padding: 12px;
+            border-radius: 25px;
+            font-size: 0.9rem;
             text-align: center;
             width: 100%;
-            margin: 10px 0;
+            margin: 8px 0;
         }
 
         .login-box input::placeholder {
@@ -403,16 +408,16 @@
 
         .login-box button {
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             background: #ffd700;
             border: none;
-            border-radius: 30px;
-            font-size: 1.2rem;
+            border-radius: 25px;
+            font-size: 1.1rem;
             font-weight: bold;
             color: black;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-top: 15px;
+            margin-top: 10px;
         }
 
         .login-box button:hover {
@@ -424,14 +429,14 @@
         /* رسائل الإشعارات */
         .toast-container {
             position: fixed;
-            bottom: 30px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 9999;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             pointer-events: none;
         }
 
@@ -440,18 +445,18 @@
             backdrop-filter: blur(5px);
             border: 2px solid #ffd700;
             color: white;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-size: 1.1rem;
+            padding: 12px 20px;
+            border-radius: 40px;
+            font-size: 0.95rem;
             font-weight: bold;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             animation: slideUp 0.3s ease forwards;
             max-width: 90%;
             text-align: center;
-            border-right: 5px solid #ffd700;
+            border-right: 4px solid #ffd700;
         }
 
         .toast-message.success {
@@ -498,7 +503,7 @@
 </head>
 <body>
 
-    <!-- فيديو الخلفية - هيتكرر تلقائياً loop -->
+    <!-- فيديو الخلفية -->
     <video autoplay muted loop id="bg-video">
         <source src="background.mp4" type="video/mp4">
         <source src="background.webm" type="video/webm">
@@ -506,7 +511,7 @@
         متصفحك لا يدعم تشغيل الفيديو.
     </video>
 
-    <img src="loge.png" class="logo" alt="Logo" onerror="this.src='https://via.placeholder.com/120x120?text=Logo'">
+    <img src="loge.png" class="logo" alt="Logo" onerror="this.src='https://via.placeholder.com/100x100?text=Logo'">
 
     <div class="toast-container" id="toastContainer"></div>
 
@@ -529,13 +534,13 @@
             <button class="ans-btn" id="btn4" onclick="submitAns(4)"></button>
         </div>
         
-        <!-- أزرار التصنيف الجديدة -->
-        <div class="classification-buttons">
+        <!-- أزرار التصنيف - هتظهر للمدير فقط -->
+        <div id="classificationButtons" class="classification-buttons">
             <button class="class-btn correct-class" onclick="showClassification('correct')">
-                ✅ الإجابات الصحيحة
+                ✅ صح
             </button>
             <button class="class-btn wrong-class" onclick="showClassification('wrong')">
-                ❌ الإجابات الخاطئة
+                ❌ غلط
             </button>
         </div>
     </div>
@@ -553,7 +558,7 @@
 
     <!-- واجهة المدير -->
     <div id="admin-interface">
-        <h2 style="color:#ffd700">⚙️ لوحة التحكم</h2>
+        <h2 style="color:#ffd700; font-size:1.5rem;">⚙️ لوحة التحكم</h2>
         <div class="admin-box">
             <h4>➕ إضافة سؤال جديد</h4>
             <input type="text" id="edit-q" placeholder="السؤال">
@@ -562,12 +567,12 @@
             <input type="text" id="edit-a3" placeholder="الإجابة الثالثة">
             <input type="text" id="edit-a4" placeholder="الإجابة الرابعة">
             <input type="number" id="edit-correct" placeholder="رقم الإجابة الصحيحة (1-4)" min="1" max="4">
-            <button onclick="createNewQuestion()" style="width:100%; padding:12px; background:green; color:white; font-weight:bold; margin-top:10px; cursor:pointer;">💾 حفظ السؤال</button>
+            <button onclick="createNewQuestion()" style="width:100%; padding:10px; background:green; color:white; font-weight:bold; margin-top:8px; cursor:pointer; border:none; border-radius:5px;">💾 حفظ السؤال</button>
         </div>
 
-        <h3>🗂️ أرشيف الأسئلة</h3>
+        <h3 style="font-size:1.2rem;">🗂️ أرشيف الأسئلة</h3>
         <div id="archive-display"></div>
-        <button onclick="location.reload()" style="background:red; color:white; padding:10px; margin-top:20px; width:100%; border:none; border-radius:5px; cursor:pointer;">🚪 خروج من لوحة التحكم</button>
+        <button onclick="location.reload()" style="background:red; color:white; padding:8px; margin-top:15px; width:100%; border:none; border-radius:5px; cursor:pointer; font-size:0.9rem;">🚪 خروج من لوحة التحكم</button>
     </div>
 
     <script>
@@ -603,18 +608,15 @@
             }, duration);
         }
 
-        // ===== دوال التصنيف الجديدة =====
+        // ===== دوال التصنيف =====
         function showClassification(type) {
             const modal = document.getElementById('classificationModal');
             const modalTitle = document.getElementById('modalTitle');
             const answersList = document.getElementById('answersList');
             
-            // تحديد عنوان النافذة
             modalTitle.textContent = type === 'correct' ? '✅ الإجابات الصحيحة' : '❌ الإجابات الخاطئة';
             
-            // جلب البيانات من الأرشيف
             const archive = JSON.parse(localStorage.getItem('archive') || "[]");
-            const currentQ = JSON.parse(localStorage.getItem('current_q'));
             
             if (archive.length === 0) {
                 answersList.innerHTML = '<div class="no-answers">لا توجد إجابات بعد</div>';
@@ -622,11 +624,9 @@
                 return;
             }
             
-            // آخر سؤال في الأرشيف هو السؤال الحالي
             const lastSession = archive[archive.length - 1];
             const logs = lastSession.logs || [];
             
-            // تصفية الإجابات حسب النوع
             const filteredLogs = logs.filter(log => 
                 type === 'correct' ? log.isCorrect : !log.isCorrect
             );
@@ -637,7 +637,7 @@
                 answersList.innerHTML = filteredLogs.map(log => `
                     <div class="answer-item ${type === 'correct' ? 'correct-item' : 'wrong-item'}">
                         <div class="user-email">📧 ${log.user}</div>
-                        <div class="user-choice">📝 الإجابة: ${log.choiceText}</div>
+                        <div class="user-choice">📝 ${log.choiceText}</div>
                     </div>
                 `).join('');
             }
@@ -649,7 +649,6 @@
             document.getElementById('classificationModal').style.display = 'none';
         }
 
-        // إغلاق المودال عند الضغط خارجها
         window.onclick = function(event) {
             const modal = document.getElementById('classificationModal');
             if (event.target === modal) {
@@ -767,10 +766,13 @@
             document.getElementById('login-screen').style.display = 'none';
             
             if (email === ADMIN_EMAIL) {
+                // لو مدير - يظهر له التصنيف ولوحة التحكم
                 document.getElementById('admin-interface').style.display = 'block';
+                document.getElementById('classificationButtons').classList.add('show');
                 renderArchive();
                 showMessage('👑 مرحباً بك أيها المدير', 'success');
             } else {
+                // لو مستخدم عادي - التصنيف مخفي
                 document.getElementById('quiz-interface').style.display = 'block';
                 localStorage.setItem('user', email);
                 showMessage('🎉 أهلاً بك في المسابقة! اختر إجابتك', 'success');
@@ -855,11 +857,11 @@
                 <div class="session-block">
                     <button class="delete-btn" onclick="deleteSession(${index})">🗑️ حذف</button>
                     <strong>📌 ${item.text}</strong>
-                    <div style="font-size:12px; margin-top:10px;">
+                    <div style="font-size:11px; margin-top:8px;">
                         ${item.logs.length === 0 ? 
                             '<p style="color:#888;">لا توجد إجابات بعد</p>' : 
                             item.logs.map(l => `
-                                <p style="color:${l.isCorrect ? '#28a745' : '#ff4d4d'}; margin:5px 0;">
+                                <p style="color:${l.isCorrect ? '#28a745' : '#ff4d4d'}; margin:3px 0;">
                                     ${l.isCorrect ? '✅' : '❌'} ${l.user}: ${l.choiceText}
                                 </p>
                             `).join('')}
@@ -879,4 +881,4 @@
         }
     </script>
 </body>
-    </html>
+                </html>
