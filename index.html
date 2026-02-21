@@ -3,634 +3,789 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مسابقة رمضان</title>
+    <title>مسابقة رمضان - Firebase</title>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
+    
     <style>
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
-        body, html {
-            height: 100%;
-            width: 100%;
+        body {
             font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
-            overflow: hidden;
-            background: #000;
+            align-items: center;
+            color: white;
+            position: relative;
+            overflow-x: hidden;
         }
 
+        /* فيديو الخلفية */
         #bg-video {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            min-width: 100%;
-            min-height: 100%;
-            transform: translateX(-50%) translateY(-50%);
-            z-index: -1;
-            object-fit: cover;
-        }
-
-        .logo {
-            width: 120px;
-            margin-bottom: 20px;
-            z-index: 10;
-            filter: drop-shadow(0 0 10px #ffd700);
-        }
-
-        #quiz-interface, #admin-interface, #login-screen {
-            display: none;
-        }
-
-        #login-screen {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 3000;
-        }
-
-        .login-box {
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
-            border: 2px solid #ffd700;
-            padding: 50px 40px;
-            border-radius: 30px;
-            text-align: center;
-            width: 90%;
-            max-width: 400px;
-            color: white;
-            animation: fadeIn 0.5s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .login-box h3 {
-            color: #ffd700;
-            font-size: 2.2rem;
-            margin-bottom: 25px;
-            text-shadow: 0 0 10px #ffd700;
-        }
-
-        .login-box input {
-            background: rgba(255, 255, 255, 0.15);
-            border: 2px solid #ffd700;
-            color: white;
-            padding: 18px;
-            border-radius: 40px;
-            font-size: 1.1rem;
-            text-align: center;
-            width: 100%;
-            margin: 15px 0;
-        }
-
-        .login-box button {
-            width: 100%;
-            padding: 18px;
-            background: #ffd700;
-            border: none;
-            border-radius: 40px;
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: black;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 20px;
-        }
-
-        .login-box button:hover {
-            background: #ffed4e;
-            transform: scale(1.02);
-            box-shadow: 0 0 20px #ffd700;
-        }
-
-        #quiz-interface {
-            background: transparent;
-            border: 2px solid rgba(255, 215, 0, 0.7);
-            border-radius: 25px;
-            padding: 40px 30px;
-            width: 90%;
-            max-width: 600px;
-            text-align: center;
-            color: white;
-            box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
-            animation: slideUp 0.5s;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        #q-text {
-            font-size: 2.2rem;
-            margin-bottom: 35px;
-            color: #ffd700;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
-
-        .options-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .ans-btn {
-            width: 100%;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid #ffd700;
-            color: white;
-            border-radius: 15px;
-            cursor: pointer;
-            font-size: 1.3rem;
-            font-weight: bold;
-            transition: all 0.3s;
-            backdrop-filter: blur(2px);
-        }
-
-        .ans-btn:hover {
-            background: rgba(255, 215, 0, 0.3);
-            transform: scale(1.02);
-            box-shadow: 0 0 20px #ffd700;
-        }
-
-        .ans-btn:active {
-            transform: scale(0.98);
-        }
-
-        #admin-interface {
-            background: #0b101b;
-            color: white;
-            width: 100%;
-            height: 100vh;
             position: fixed;
             top: 0;
             left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+
+        /* طبقة داكنة فوق الفيديو */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+        }
+
+        /* عناصر متحركة في الخلفية */
+        .bg-animation span {
+            position: absolute;
+            display: block;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 50%;
+            animation: float 15s infinite;
+            bottom: -150px;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(-1000px) rotate(720deg);
+                opacity: 0.5;
+            }
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
             padding: 20px;
-            overflow-y: auto;
-            z-index: 2000;
+            z-index: 1;
         }
 
-        .admin-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            border-bottom: 2px solid #ffd700;
-            padding-bottom: 15px;
-        }
-
-        .admin-header h2 {
-            color: #ffd700;
-            font-size: 2rem;
-        }
-
-        .admin-box {
-            background: #1a202c;
-            padding: 20px;
-            border-radius: 15px;
+        .logo {
+            text-align: center;
             margin-bottom: 20px;
-            border: 1px solid #ffd700;
         }
 
-        .admin-box h3 {
+        .logo img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid #ffd700;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .box {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border: 2px solid #ffd700;
+            border-radius: 25px;
+            padding: 35px;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
             color: #ffd700;
-            margin-bottom: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+            text-shadow: 0 0 15px #ffd700;
+            font-weight: bold;
+        }
+
+        h3 {
+            color: #ffd700;
+            margin: 25px 0 15px;
+            font-size: 1.4rem;
             border-right: 4px solid #ffd700;
-            padding-right: 10px;
+            padding-right: 15px;
         }
 
-        input {
+        input, textarea, select {
             width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border-radius: 8px;
-            background: #2d3748;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #ffd700;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
             color: white;
-            border: 1px solid #4a5568;
+            font-size: 1rem;
+            transition: all 0.3s;
         }
 
-        .save-btn {
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            box-shadow: 0 0 20px #ffd700;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        button {
             width: 100%;
-            padding: 14px;
-            background: #28a745;
-            color: white;
-            font-size: 1.1rem;
+            padding: 16px;
+            margin: 10px 0;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
+            background: #ffd700;
+            color: black;
+            font-size: 1.2rem;
+            font-weight: bold;
             cursor: pointer;
-            margin-top: 10px;
+            transition: all 0.3s;
         }
 
-        .classification-panel {
-            background: #1a202c;
-            padding: 20px;
+        button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 25px #ffd700;
+        }
+
+        button.secondary {
+            background: transparent;
+            border: 2px solid #ffd700;
+            color: #ffd700;
+        }
+
+        button.secondary:hover {
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .question-text {
+            font-size: 1.8rem;
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .answer-btn {
+            width: 100%;
+            padding: 18px;
+            margin: 10px 0;
+            border: 2px solid #ffd700;
             border-radius: 15px;
-            margin-bottom: 20px;
-            border: 1px solid #ffd700;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: right;
+            font-weight: bold;
         }
 
-        .classification-stats {
+        .answer-btn:hover {
+            background: rgba(255, 215, 0, 0.3);
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .answer-btn:active {
+            transform: scale(0.98);
+        }
+
+        .stats-box {
             display: flex;
             gap: 15px;
-            margin-bottom: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
         }
 
-        .stat-box {
+        .stat {
             flex: 1;
-            background: #2d3748;
+            min-width: 100px;
             padding: 15px;
-            border-radius: 10px;
+            border-radius: 15px;
             text-align: center;
+            background: rgba(255, 255, 255, 0.05);
         }
 
-        .stat-box.correct { border: 2px solid #28a745; }
-        .stat-box.wrong { border: 2px solid #dc3545; }
+        .stat.correct {
+            border: 2px solid #28a745;
+            background: rgba(40, 167, 69, 0.1);
+        }
+
+        .stat.wrong {
+            border: 2px solid #dc3545;
+            background: rgba(220, 53, 69, 0.1);
+        }
 
         .stat-number {
             font-size: 2rem;
             font-weight: bold;
         }
 
-        .stat-number.correct { color: #28a745; }
-        .stat-number.wrong { color: #dc3545; }
-
-        .classification-buttons {
-            display: flex;
-            gap: 15px;
+        .stat-number.correct {
+            color: #28a745;
         }
 
-        .class-btn {
+        .stat-number.wrong {
+            color: #dc3545;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-top: 5px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .action-btn {
             flex: 1;
-            padding: 15px;
-            border-radius: 30px;
-            font-size: 1.1rem;
-            background: rgba(0,0,0,0.6);
-            border: 2px solid;
-            color: white;
-            cursor: pointer;
-        }
-
-        .class-btn.correct { border-color: #28a745; }
-        .class-btn.wrong { border-color: #dc3545; }
-
-        .classification-modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.95);
-            border: 2px solid #ffd700;
-            border-radius: 20px;
-            padding: 20px;
-            width: 90%;
-            max-width: 400px;
-            max-height: 80vh;
-            overflow-y: auto;
-            z-index: 10000;
-            color: white;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 2px solid #ffd700;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-
-        .close-modal {
-            background: none;
-            border: none;
-            color: #ffd700;
-            font-size: 2rem;
-            cursor: pointer;
-        }
-
-        .answer-item {
             padding: 12px;
-            margin: 8px 0;
-            border-radius: 8px;
-            background: rgba(255,255,255,0.1);
-            border-right: 4px solid;
-        }
-
-        .answer-item.correct-item { border-right-color: #28a745; }
-        .answer-item.wrong-item { border-right-color: #dc3545; }
-
-        .user-email {
+            border: 2px solid;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            cursor: pointer;
             font-weight: bold;
-            color: #ffd700;
-            margin-bottom: 5px;
+            transition: all 0.3s;
         }
 
-        .session-block {
-            background: #2d3748;
+        .action-btn.correct {
+            border-color: #28a745;
+        }
+
+        .action-btn.correct:hover {
+            background: rgba(40, 167, 69, 0.3);
+            box-shadow: 0 0 20px #28a745;
+        }
+
+        .action-btn.wrong {
+            border-color: #dc3545;
+        }
+
+        .action-btn.wrong:hover {
+            background: rgba(220, 53, 69, 0.3);
+            box-shadow: 0 0 20px #dc3545;
+        }
+
+        .archive-item {
+            background: rgba(255, 255, 255, 0.05);
             padding: 15px;
-            margin-top: 10px;
+            margin: 10px 0;
             border-radius: 10px;
             border-right: 4px solid #ffd700;
             position: relative;
         }
 
-        .delete-btn {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
+        .archive-item .delete-btn {
             position: absolute;
             top: 10px;
             left: 10px;
-            cursor: pointer;
+            width: auto;
+            padding: 5px 10px;
+            background: #dc3545;
+            font-size: 0.8rem;
         }
 
-        .toast-container {
+        .hidden {
+            display: none !important;
+        }
+
+        .toast {
             position: fixed;
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 9999;
-        }
-
-        .toast-message {
-            background: rgba(0,0,0,0.9);
+            padding: 15px 30px;
+            border-radius: 50px;
+            background: rgba(0, 0, 0, 0.9);
             border: 2px solid #ffd700;
             color: white;
-            padding: 12px 25px;
-            border-radius: 40px;
-            font-size: 1rem;
-            border-right: 4px solid;
+            z-index: 1000;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
             animation: slideUp 0.3s;
         }
 
-        .toast-message.success { border-right-color: #28a745; }
-        .toast-message.error { border-right-color: #dc3545; }
+        .toast.error {
+            border-color: #dc3545;
+        }
 
+        @keyframes slideUp {
+            from { bottom: 20px; opacity: 0; }
+            to { bottom: 30px; opacity: 1; }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #ffd700;
+            font-size: 1.2rem;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #ffd700;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* للموبايل */
         @media (max-width: 768px) {
-            #quiz-interface {
-                padding: 20px 15px;
-                max-width: 400px;
-            }
-            
-            #q-text { font-size: 1.6rem; }
-            .ans-btn { padding: 15px; font-size: 1.1rem; }
-            .classification-stats { flex-direction: column; }
-            .classification-buttons { flex-direction: column; }
+            .box { padding: 20px; }
+            h2 { font-size: 1.8rem; }
+            h3 { font-size: 1.2rem; }
+            .question-text { font-size: 1.5rem; }
+            .answer-btn { font-size: 1.1rem; padding: 15px; }
+            .stats-box { flex-direction: column; }
+            .stat { min-width: auto; }
         }
     </style>
 </head>
 <body>
+    <!-- فيديو الخلفية -->
     <video autoplay muted loop id="bg-video">
         <source src="background.mp4" type="video/mp4">
     </video>
+    <div class="overlay"></div>
 
-    <img src="loge.png" class="logo" alt="Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22%23ffd700%22/><text x=%2250%22 y=%2270%22 font-size=%2260%22 text-anchor=%22middle%22 fill=%22black%22>🌙</text></svg>'">
+    <!-- عناصر متحركة في الخلفية -->
+    <div class="bg-animation" id="bgAnimation"></div>
 
-    <div class="toast-container" id="toastContainer"></div>
+    <!-- موسيقى الخلفية (تبدأ بعد تفاعل المستخدم) -->
+    <audio id="bg-music" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
 
-    <div id="login-screen" style="display: flex;">
-        <div class="login-box">
-            <h3>🌙 رمضان كريم</h3>
-            <input type="email" id="email-input" placeholder="البريد الإلكتروني" value="admin@ramadan.com">
-            <button onclick="login()">دخول ✨</button>
-        </div>
-    </div>
-
-    <div id="quiz-interface">
-        <h2 id="q-text">جاري التحميل...</h2>
-        <div class="options-container">
-            <button class="ans-btn" onclick="submitAnswer(1)"></button>
-            <button class="ans-btn" onclick="submitAnswer(2)"></button>
-            <button class="ans-btn" onclick="submitAnswer(3)"></button>
-            <button class="ans-btn" onclick="submitAnswer(4)"></button>
-        </div>
-    </div>
-
-    <div id="admin-interface">
-        <div class="admin-header">
-            <h2>⚙️ لوحة التحكم</h2>
-            <button onclick="logout()" style="background:#dc3545; color:white; padding:8px 15px; border:none; border-radius:5px;">🚪 خروج</button>
-        </div>
-
-        <div class="admin-box">
-            <h3>➕ إضافة سؤال جديد</h3>
-            <input type="text" id="edit-q" placeholder="السؤال" value="ما هي السورة التي فرض فيها الصيام؟">
-            <input type="text" id="edit-a1" placeholder="الإجابة الأولى" value="البقرة">
-            <input type="text" id="edit-a2" placeholder="الإجابة الثانية" value="الماعون">
-            <input type="text" id="edit-a3" placeholder="الإجابة الثالثة" value="الأنفال">
-            <input type="text" id="edit-a4" placeholder="الإجابة الرابعة" value="المائدة">
-            <input type="number" id="edit-correct" placeholder="رقم الإجابة الصحيحة (1-4)" value="1" min="1" max="4">
-            <button class="save-btn" onclick="addQuestion()">💾 حفظ السؤال</button>
-        </div>
-
-        <div class="classification-panel">
-            <h3>📊 تصنيف الإجابات</h3>
-            <div class="classification-stats" id="quickStats"></div>
-            <div class="classification-buttons">
-                <button class="class-btn correct" onclick="showClassification('correct')">✅ صح</button>
-                <button class="class-btn wrong" onclick="showClassification('wrong')">❌ غلط</button>
+    <div class="container">
+        <!-- شاشة الدخول -->
+        <div id="loginScreen">
+            <div class="box">
+                <div class="logo">
+                    <img src="loge.png" alt="Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22%23ffd700%22/><text x=%2250%22 y=%2270%22 font-size=%2260%22 text-anchor=%22middle%22 fill=%22black%22>🌙</text></svg>'">
+                </div>
+                <h2>🌙 رمضان كريم</h2>
+                <input type="email" id="emailInput" placeholder="البريد الإلكتروني" value="admin@ramadan.com">
+                <button onclick="login()">دخول ✨</button>
             </div>
         </div>
 
-        <div class="admin-box">
-            <h3>🗂️ أرشيف الأسئلة</h3>
-            <div id="archive-display"></div>
+        <!-- شاشة المسابقة -->
+        <div id="quizScreen" class="hidden">
+            <div class="box">
+                <div class="logo">
+                    <img src="loge.png" alt="Logo">
+                </div>
+                <h2 id="questionText">جاري التحميل...</h2>
+                <div id="answersContainer" class="answers-container"></div>
+            </div>
+        </div>
+
+        <!-- شاشة المدير -->
+        <div id="adminScreen" class="hidden">
+            <div class="box">
+                <div class="logo">
+                    <img src="loge.png" alt="Logo">
+                </div>
+                <h2>⚙️ لوحة التحكم</h2>
+                
+                <h3>➕ إضافة سؤال جديد</h3>
+                <input type="text" id="qText" placeholder="السؤال">
+                <input type="text" id="a1" placeholder="الإجابة 1">
+                <input type="text" id="a2" placeholder="الإجابة 2">
+                <input type="text" id="a3" placeholder="الإجابة 3">
+                <input type="text" id="a4" placeholder="الإجابة 4">
+                <input type="number" id="correct" placeholder="رقم الإجابة الصحيحة (1-4)" min="1" max="4">
+                <button onclick="addQuestion()">💾 حفظ السؤال</button>
+
+                <div class="stats-box" id="statsContainer">
+                    <div class="stat">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">صحيحة</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">خاطئة</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">إجمالي</div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="action-btn correct" onclick="showCorrectAnswers()">✅ صح</button>
+                    <button class="action-btn wrong" onclick="showWrongAnswers()">❌ غلط</button>
+                </div>
+
+                <h3>📚 أرشيف الأسئلة</h3>
+                <div id="archiveContainer"></div>
+
+                <button onclick="logout()" class="secondary">🚪 خروج</button>
+            </div>
         </div>
     </div>
 
-    <div id="classificationModal" class="classification-modal">
-        <div class="modal-header">
-            <h3 id="modalTitle">الإجابات</h3>
-            <button class="close-modal" onclick="closeModal()">&times;</button>
-        </div>
-        <div id="answersList" class="answers-list"></div>
-    </div>
+    <div id="toast" class="toast hidden"></div>
 
     <script>
+        // ==================== Firebase Config ====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAutas4LwSZUuhk6mJquT_n5LuRPyuCZUc",
+            authDomain: "ramadan-quiz-a4778.firebaseapp.com",
+            projectId: "ramadan-quiz-a4778",
+            storageBucket: "ramadan-quiz-a4778.firebasestorage.app",
+            messagingSenderId: "574405195850",
+            appId: "1:574405195850:web:0947812576a5aee2540eb3",
+            measurementId: "G-ZENC5NR921"
+        };
+
+        // تهيئة Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const analytics = firebase.analytics();
+
+        // ==================== تشغيل الموسيقى ====================
+        function playMusic() {
+            const music = document.getElementById('bg-music');
+            music.volume = 0.3;
+            music.play().catch(e => console.log('الموسيقى تحتاج تفاعل'));
+        }
+
+        // تشغيل الموسيقى عند أول لمسة
+        document.body.addEventListener('click', function initMusic() {
+            playMusic();
+            document.body.removeEventListener('click', initMusic);
+        });
+
+        // ==================== عناصر متحركة في الخلفية ====================
+        function createBgElements() {
+            const container = document.getElementById('bgAnimation');
+            for (let i = 0; i < 20; i++) {
+                const span = document.createElement('span');
+                span.style.left = Math.random() * 100 + '%';
+                span.style.animationDuration = Math.random() * 10 + 10 + 's';
+                span.style.width = span.style.height = Math.random() * 30 + 10 + 'px';
+                container.appendChild(span);
+            }
+        }
+        createBgElements();
+
+        // ==================== المتغيرات العامة ====================
         let currentUser = null;
         let isAdmin = false;
+        let currentQuestion = null;
 
-        function showMessage(text, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast-message ${type}`;
-            toast.textContent = text;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+        // ==================== دوال مساعدة ====================
+        function showToast(msg, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = `toast ${isError ? 'error' : ''}`;
+            toast.classList.remove('hidden');
+            
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
         }
 
+        // ==================== الدخول ====================
         async function login() {
-            const email = document.getElementById('email-input').value.trim();
-            if (!email) return showMessage('الرجاء إدخال البريد', 'error');
+            const email = document.getElementById('emailInput').value.trim();
+            
+            if (!email) {
+                showToast('الرجاء إدخال البريد الإلكتروني', true);
+                return;
+            }
 
+            currentUser = { email: email };
+            isAdmin = (email === 'admin@ramadan.com');
+
+            // تسجيل المستخدم في Firestore
             try {
-                const res = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email })
+                await db.collection('users').doc(email).set({
+                    email: email,
+                    joinedAt: new Date().toISOString()
                 });
-                const data = await res.json();
-                
-                if (data.success) {
-                    currentUser = data.user;
-                    isAdmin = data.isAdmin;
-                    
-                    document.getElementById('login-screen').style.display = 'none';
-                    
-                    if (isAdmin) {
-                        document.getElementById('admin-interface').style.display = 'block';
-                        loadAdminData();
-                    } else {
-                        document.getElementById('quiz-interface').style.display = 'block';
-                        loadQuestion();
-                    }
-                    showMessage(isAdmin ? 'مرحباً أيها المدير' : 'مرحباً بك');
-                }
-            } catch (err) {
-                showMessage('خطأ في الاتصال', 'error');
+            } catch (error) {
+                console.log('خطأ في تسجيل المستخدم:', error);
+            }
+
+            document.getElementById('loginScreen').classList.add('hidden');
+
+            if (isAdmin) {
+                document.getElementById('adminScreen').classList.remove('hidden');
+                loadAdminData();
+                showToast('مرحباً أيها المدير');
+            } else {
+                document.getElementById('quizScreen').classList.remove('hidden');
+                loadQuestion();
+                showToast('مرحباً بك في المسابقة');
             }
         }
 
+        // ==================== تحميل السؤال الحالي ====================
         async function loadQuestion() {
             try {
-                const res = await fetch('/api/current-question');
-                const q = await res.json();
-                document.getElementById('q-text').textContent = q.text;
-                document.querySelectorAll('.ans-btn').forEach((btn, i) => {
-                    btn.textContent = q.answers[i];
+                const doc = await db.collection('settings').doc('current').get();
+                
+                if (doc.exists) {
+                    currentQuestion = doc.data();
+                } else {
+                    // سؤال افتراضي
+                    currentQuestion = {
+                        text: "ما هي السورة التي فرض فيها الصيام؟",
+                        answers: ["البقرة", "الماعون", "الأنفال", "المائدة"],
+                        correct: 1
+                    };
+                }
+
+                document.getElementById('questionText').textContent = currentQuestion.text;
+                
+                const container = document.getElementById('answersContainer');
+                container.innerHTML = '';
+                
+                currentQuestion.answers.forEach((answer, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'answer-btn';
+                    btn.textContent = answer;
+                    btn.onclick = () => submitAnswer(index + 1);
+                    container.appendChild(btn);
                 });
-            } catch (err) {
-                showMessage('خطأ في تحميل السؤال', 'error');
+            } catch (error) {
+                showToast('خطأ في تحميل السؤال', true);
+                console.log(error);
             }
         }
 
-        async function submitAnswer(index) {
+        // ==================== تسجيل إجابة ====================
+        async function submitAnswer(answerIndex) {
             if (!currentUser) return;
+
+            const isCorrect = (answerIndex === currentQuestion.correct);
+
             try {
-                const res = await fetch('/api/submit-answer', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: currentUser.email, answerIndex: index })
+                await db.collection('answers').add({
+                    user: currentUser.email,
+                    question: currentQuestion.text,
+                    answer: currentQuestion.answers[answerIndex - 1],
+                    answerIndex: answerIndex,
+                    isCorrect: isCorrect,
+                    timestamp: new Date().toISOString()
                 });
-                const data = await res.json();
-                showMessage(data.message, data.isCorrect ? 'success' : 'error');
-            } catch (err) {
-                showMessage('خطأ في تسجيل الإجابة', 'error');
+
+                showToast(
+                    isCorrect ? '✅ إجابة صحيحة! بارك الله فيك' : '❌ إجابة خاطئة، حاول مرة أخرى',
+                    !isCorrect
+                );
+            } catch (error) {
+                showToast('خطأ في تسجيل الإجابة', true);
+                console.log(error);
             }
         }
 
+        // ==================== إضافة سؤال جديد (للمدير) ====================
         async function addQuestion() {
-            const q = {
-                text: document.getElementById('edit-q').value,
-                answers: [
-                    document.getElementById('edit-a1').value,
-                    document.getElementById('edit-a2').value,
-                    document.getElementById('edit-a3').value,
-                    document.getElementById('edit-a4').value
-                ],
-                correct: document.getElementById('edit-correct').value,
-                adminEmail: 'admin@ramadan.com'
+            const text = document.getElementById('qText').value;
+            const answers = [
+                document.getElementById('a1').value,
+                document.getElementById('a2').value,
+                document.getElementById('a3').value,
+                document.getElementById('a4').value
+            ];
+            const correct = parseInt(document.getElementById('correct').value);
+
+            if (!text || answers.some(a => !a) || !correct) {
+                showToast('املأ جميع الحقول', true);
+                return;
+            }
+
+            if (correct < 1 || correct > 4) {
+                showToast('رقم الإجابة الصحيحة يجب أن يكون بين 1 و 4', true);
+                return;
+            }
+
+            const newQuestion = {
+                text: text,
+                answers: answers,
+                correct: correct,
+                createdAt: new Date().toISOString()
             };
 
             try {
-                const res = await fetch('/api/add-question', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(q)
-                });
-                const data = await res.json();
-                if (data.success) {
-                    showMessage('تم حفظ السؤال');
-                    setTimeout(() => location.reload(), 1500);
-                }
-            } catch (err) {
-                showMessage('خطأ في الحفظ', 'error');
+                // حفظ كسؤال حالي
+                await db.collection('settings').doc('current').set(newQuestion);
+                
+                // حفظ في الأرشيف
+                await db.collection('archive').add(newQuestion);
+
+                showToast('✅ تم حفظ السؤال بنجاح');
+                
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            } catch (error) {
+                showToast('خطأ في حفظ السؤال', true);
+                console.log(error);
             }
         }
 
+        // ==================== تحميل بيانات المدير ====================
         async function loadAdminData() {
             try {
-                const res = await fetch('/api/stats?adminEmail=admin@ramadan.com');
-                const data = await res.json();
-                
-                const last = data.archive[data.archive.length - 1] || { logs: [] };
-                const correct = last.logs.filter(l => l.isCorrect).length;
-                const wrong = last.logs.filter(l => !l.isCorrect).length;
-                
-                document.getElementById('quickStats').innerHTML = `
-                    <div class="stat-box correct"><div class="stat-number correct">${correct}</div><div>صحيحة</div></div>
-                    <div class="stat-box wrong"><div class="stat-number wrong">${wrong}</div><div>خاطئة</div></div>
-                    <div class="stat-box"><div class="stat-number">${last.logs.length}</div><div>إجمالي</div></div>
-                `;
-                
-                document.getElementById('archive-display').innerHTML = data.archive.map(item => `
-                    <div class="session-block">
-                        <button class="delete-btn" onclick="deleteQuestion(${item.id})">🗑️</button>
-                        <strong>📌 ${item.text}</strong>
-                        <div style="margin-top:10px; font-size:0.9rem;">
-                            ${item.logs.map(l => `
-                                <p style="color:${l.isCorrect ? '#28a745' : '#ff4d4d'}; margin:5px 0;">
-                                    ${l.isCorrect ? '✅' : '❌'} ${l.user}: ${l.choiceText}
-                                </p>
-                            `).join('') || 'لا توجد إجابات'}
-                        </div>
+                // جلب الإجابات
+                const answersSnapshot = await db.collection('answers').get();
+                const answers = [];
+                answersSnapshot.forEach(doc => answers.push(doc.data()));
+
+                const correctCount = answers.filter(a => a.isCorrect).length;
+                const wrongCount = answers.filter(a => !a.isCorrect).length;
+                const total = answers.length;
+
+                document.getElementById('statsContainer').innerHTML = `
+                    <div class="stat correct">
+                        <div class="stat-number correct">${correctCount}</div>
+                        <div class="stat-label">صحيحة</div>
                     </div>
-                `).join('');
-            } catch (err) {
-                showMessage('خطأ في تحميل البيانات', 'error');
-            }
-        }
+                    <div class="stat wrong">
+                        <div class="stat-number wrong">${wrongCount}</div>
+                        <div class="stat-label">خاطئة</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">${total}</div>
+                        <div class="stat-label">إجمالي</div>
+                    </div>
+                `;
 
-        async function deleteQuestion(id) {
-            if (!confirm('متأكد؟')) return;
-            try {
-                await fetch(`/api/delete-question/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ adminEmail: 'admin@ramadan.com' })
+                // جلب الأرشيف
+                const archiveSnapshot = await db.collection('archive').orderBy('createdAt', 'desc').get();
+                const archive = [];
+                archiveSnapshot.forEach(doc => {
+                    archive.push({ id: doc.id, ...doc.data() });
                 });
-                showMessage('تم الحذف');
-                loadAdminData();
-            } catch (err) {
-                showMessage('خطأ في الحذف', 'error');
+
+                const archiveContainer = document.getElementById('archiveContainer');
+                archiveContainer.innerHTML = '';
+
+                archive.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'archive-item';
+                    
+                    // جلب إجابات هذا السؤال
+                    const questionAnswers = answers.filter(a => a.question === item.text);
+                    
+                    let answersHtml = '';
+                    if (questionAnswers.length > 0) {
+                        answersHtml = questionAnswers.map(a => `
+                            <div style="color: ${a.isCorrect ? '#28a745' : '#dc3545'}; margin: 5px 0; font-size: 0.9rem;">
+                                ${a.isCorrect ? '✅' : '❌'} ${a.user}: ${a.answer}
+                            </div>
+                        `).join('');
+                    } else {
+                        answersHtml = '<div style="color: #666;">لا توجد إجابات</div>';
+                    }
+
+                    div.innerHTML = `
+                        <strong style="display:block; margin-bottom:10px;">📌 ${item.text}</strong>
+                        ${answersHtml}
+                    `;
+
+                    archiveContainer.appendChild(div);
+                });
+            } catch (error) {
+                showToast('خطأ في تحميل البيانات', true);
+                console.log(error);
             }
         }
 
-        async function showClassification(type) {
-            const res = await fetch('/api/stats?adminEmail=admin@ramadan.com');
-            const data = await res.json();
-            const last = data.archive[data.archive.length - 1] || { logs: [] };
-            const answers = last.logs.filter(l => type === 'correct' ? l.isCorrect : !l.isCorrect);
-            
-            document.getElementById('modalTitle').textContent = type === 'correct' ? '✅ الصحيحة' : '❌ الخاطئة';
-            document.getElementById('answersList').innerHTML = answers.map(a => `
-                <div class="answer-item ${type === 'correct' ? 'correct-item' : 'wrong-item'}">
-                    <div class="user-email">📧 ${a.user}</div>
-                    <div>📝 ${a.choiceText}</div>
-                </div>
-            `).join('') || '<div style="text-align:center; padding:20px;">لا توجد إجابات</div>';
-            
-            document.getElementById('classificationModal').style.display = 'block';
+        // ==================== عرض الإجابات الصحيحة ====================
+        async function showCorrectAnswers() {
+            try {
+                const snapshot = await db.collection('answers').where('isCorrect', '==', true).get();
+                const answers = [];
+                snapshot.forEach(doc => answers.push(doc.data()));
+                
+                if (answers.length === 0) {
+                    showToast('لا توجد إجابات صحيحة', true);
+                    return;
+                }
+                
+                let message = '✅ الإجابات الصحيحة:\n\n';
+                answers.forEach(a => {
+                    message += `📧 ${a.user}\n📝 ${a.answer}\n\n`;
+                });
+                
+                alert(message);
+            } catch (error) {
+                showToast('خطأ', true);
+            }
         }
 
-        function closeModal() {
-            document.getElementById('classificationModal').style.display = 'none';
+        // ==================== عرض الإجابات الخاطئة ====================
+        async function showWrongAnswers() {
+            try {
+                const snapshot = await db.collection('answers').where('isCorrect', '==', false).get();
+                const answers = [];
+                snapshot.forEach(doc => answers.push(doc.data()));
+                
+                if (answers.length === 0) {
+                    showToast('لا توجد إجابات خاطئة', true);
+                    return;
+                }
+                
+                let message = '❌ الإجابات الخاطئة:\n\n';
+                answers.forEach(a => {
+                    message += `📧 ${a.user}\n📝 ${a.answer}\n\n`;
+                });
+                
+                alert(message);
+            } catch (error) {
+                showToast('خطأ', true);
+            }
         }
 
+        // ==================== خروج ====================
         function logout() {
             location.reload();
         }
     </script>
 </body>
-    </html>
+        </html>
