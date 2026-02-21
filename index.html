@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>مسابقة رمضان الاحترافية V3</title>
     <style>
         * {
@@ -19,7 +19,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;  /* توسيط المحتوى عمودياً */
+            justify-content: center;
             overflow: hidden;
         }
 
@@ -39,32 +39,32 @@
 
         .logo {
             width: 120px;
-            margin-bottom: 20px;  /* تعديل المسافة */
+            margin-bottom: 20px;
             z-index: 10;
             position: relative;
             filter: drop-shadow(0 0 10px #ffd700);
         }
 
-        /* ===== واجهة المسابقة - الحجم الافتراضي (للكمبيوتر) ===== */
+        /* ===== واجهة المسابقة ===== */
         #quiz-interface {
             display: none;
             background: transparent;
             backdrop-filter: none;
             border: 2px solid rgba(255, 215, 0, 0.7);
             border-radius: 25px;
-            padding: 40px 30px;  /* زيادة الحشو */
+            padding: 40px 30px;
             width: 90%;
-            max-width: 600px;  /* أكبر شوية */
+            max-width: 600px;
             text-align: center;
             color: white;
             box-shadow: 0 0 50px rgba(255, 215, 0, 0.4);
             position: relative;
             z-index: 10;
-            margin: 0 auto;  /* توسيط أفقي */
+            margin: 0 auto;
         }
 
         #q-text {
-            font-size: 2.2rem;  /* خط أكبر */
+            font-size: 2.2rem;
             margin-bottom: 35px;
             color: #ffd700;
             text-shadow: 
@@ -83,19 +83,20 @@
 
         .ans-btn {
             width: 100%;
-            padding: 20px 18px;  /* حشو أكبر */
+            padding: 20px 18px;
             background: rgba(0, 0, 0, 0.5);
             border: 3px solid rgba(255, 215, 0, 0.9);
             color: white;
             border-radius: 18px;
             cursor: pointer;
-            font-size: 1.5rem;  /* خط أكبر */
+            font-size: 1.5rem;
             font-weight: bold;
             transition: all 0.3s ease;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(3px);
             opacity: 0;
             animation: fadeInScale 0.8s ease-out forwards;
+            -webkit-tap-highlight-color: transparent; /* لإزالة التظليل عند اللمس على الموبايل */
         }
 
         .ans-btn:nth-child(1) { animation-delay: 0.2s; }
@@ -111,10 +112,26 @@
             box-shadow: 0 0 40px rgba(255, 215, 0, 0.7);
         }
 
-        /* ===== تعديلات للموبايل - الأجهزة الصغيرة ===== */
+        /* رسالة الخطأ للتخزين */
+        .storage-error {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(220, 53, 69, 0.9);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            z-index: 10001;
+            font-size: 1rem;
+            backdrop-filter: blur(5px);
+            border-bottom: 2px solid #ffd700;
+        }
+
+        /* ===== تعديلات للموبايل ===== */
         @media screen and (max-width: 768px) {
             body, html {
-                justify-content: flex-start;  /* رجعنا للوضع العادي عشان المحتوى يبدأ من فوق */
+                justify-content: flex-start;
             }
 
             .logo {
@@ -144,7 +161,6 @@
             }
         }
 
-        /* ===== للموبايل الصغير جداً ===== */
         @media screen and (max-width: 480px) {
             #quiz-interface {
                 max-width: 350px;
@@ -175,7 +191,7 @@
             }
         }
 
-        /* ===== واجهة المدير (لوحة التحكم) - مع سكرول ===== */
+        /* ===== واجهة المدير ===== */
         #admin-interface {
             display: none;
             background: #0b101b;
@@ -186,11 +202,10 @@
             top: 0;
             left: 0;
             padding: 20px;
-            overflow-y: auto;  /* السكرول هنا */
+            overflow-y: auto;
             z-index: 2000;
         }
 
-        /* تخصيص شريط السكرول */
         #admin-interface::-webkit-scrollbar {
             width: 10px;
         }
@@ -202,10 +217,6 @@
         #admin-interface::-webkit-scrollbar-thumb {
             background: #ffd700;
             border-radius: 5px;
-        }
-
-        #admin-interface::-webkit-scrollbar-thumb:hover {
-            background: #ffed4e;
         }
 
         .admin-header {
@@ -276,13 +287,6 @@
             margin-top: 15px;
         }
 
-        .save-btn:hover {
-            background: #34ce57;
-            transform: scale(1.02);
-            box-shadow: 0 0 30px #28a745;
-        }
-
-        /* ===== أزرار التصنيف في لوحة التحكم ===== */
         .classification-panel {
             background: #1a202c;
             padding: 25px;
@@ -368,24 +372,11 @@
             background: rgba(40, 167, 69, 0.2);
         }
 
-        .class-btn.correct:hover {
-            background: rgba(40, 167, 69, 0.4);
-            transform: scale(1.05);
-            box-shadow: 0 0 40px #28a745;
-        }
-
         .class-btn.wrong {
             border-color: #dc3545;
             background: rgba(220, 53, 69, 0.2);
         }
 
-        .class-btn.wrong:hover {
-            background: rgba(220, 53, 69, 0.4);
-            transform: scale(1.05);
-            box-shadow: 0 0 40px #dc3545;
-        }
-
-        /* نافذة التصنيف المنبثقة */
         .classification-modal {
             display: none;
             position: fixed;
@@ -441,17 +432,6 @@
             cursor: pointer;
             padding: 0;
             line-height: 1;
-            transition: color 0.3s ease;
-        }
-
-        .close-modal:hover {
-            color: white;
-        }
-
-        .answers-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
         }
 
         .answer-item {
@@ -478,48 +458,6 @@
             color: #ffd700;
             margin-bottom: 5px;
             word-break: break-all;
-            font-size: 1rem;
-        }
-
-        .answer-item .user-choice {
-            font-size: 0.95rem;
-            opacity: 0.9;
-        }
-
-        .no-answers {
-            text-align: center;
-            padding: 30px;
-            color: #888;
-            font-size: 1.2rem;
-        }
-
-        /* تعديلات لوحة التحكم للموبايل */
-        @media screen and (max-width: 768px) {
-            .admin-header h2 {
-                font-size: 1.5rem;
-            }
-
-            .classification-stats {
-                flex-direction: column;
-                gap: 12px;
-            }
-
-            .classification-buttons {
-                flex-direction: column;
-            }
-
-            .class-btn {
-                padding: 14px;
-                font-size: 1.1rem;
-            }
-
-            .stat-number {
-                font-size: 2rem;
-            }
-
-            .admin-box, .classification-panel {
-                padding: 15px;
-            }
         }
 
         /* شاشة الدخول */
@@ -565,10 +503,6 @@
             margin: 15px 0;
         }
 
-        .login-box input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
         .login-box button {
             width: 100%;
             padding: 18px;
@@ -581,12 +515,6 @@
             cursor: pointer;
             transition: all 0.3s ease;
             margin-top: 20px;
-        }
-
-        .login-box button:hover {
-            background: #ffed4e;
-            transform: scale(1.05);
-            box-shadow: 0 0 30px #ffd700;
         }
 
         /* رسائل الإشعارات */
@@ -632,11 +560,6 @@
             background: rgba(70, 0, 0, 0.9);
         }
 
-        .toast-message.warning {
-            border-right-color: #ffc107;
-            background: rgba(70, 60, 0, 0.9);
-        }
-
         @keyframes slideUp {
             from {
                 opacity: 0;
@@ -663,7 +586,6 @@
             animation: fadeOut 0.3s ease forwards;
         }
 
-        /* أرشيف الأسئلة */
         .session-block {
             background: #2d3748;
             padding: 20px;
@@ -684,40 +606,15 @@
             top: 15px;
             left: 15px;
             font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-
-        .delete-btn:hover {
-            background: #ff4757;
-            transform: scale(1.05);
-            box-shadow: 0 0 20px #dc3545;
-        }
-
-        .exit-btn {
-            width: 100%;
-            padding: 15px;
-            background: #dc3545;
-            color: white;
-            font-size: 1.2rem;
-            margin-top: 25px;
-            border-radius: 10px;
-        }
-
-        .exit-btn:hover {
-            background: #ff4757;
-            transform: scale(1.02);
-            box-shadow: 0 0 30px #dc3545;
         }
     </style>
 </head>
 <body>
 
-    <!-- فيديو الخلفية -->
     <video autoplay muted loop id="bg-video">
         <source src="background.mp4" type="video/mp4">
         <source src="background.webm" type="video/webm">
         <source src="background.ogv" type="video/ogg">
-        متصفحك لا يدعم تشغيل الفيديو.
     </video>
 
     <img src="loge.png" class="logo" alt="Logo" onerror="this.src='https://via.placeholder.com/120x120?text=Logo'">
@@ -744,14 +641,13 @@
         </div>
     </div>
 
-    <!-- واجهة المدير (لوحة التحكم) - فيها سكرول -->
+    <!-- واجهة المدير -->
     <div id="admin-interface">
         <div class="admin-header">
             <h2>⚙️ لوحة التحكم</h2>
-            <button onclick="location.reload()" style="background:#dc3545; color:white; padding:10px 20px; border-radius:8px; font-size:1rem;">🚪 خروج</button>
+            <button onclick="location.reload()" style="background:#dc3545; color:white; padding:10px 20px; border-radius:8px;">🚪 خروج</button>
         </div>
 
-        <!-- إضافة سؤال جديد -->
         <div class="admin-box">
             <h3>➕ إضافة سؤال جديد</h3>
             <input type="text" id="edit-q" placeholder="السؤال">
@@ -763,52 +659,119 @@
             <button class="save-btn" onclick="createNewQuestion()">💾 حفظ السؤال</button>
         </div>
 
-        <!-- قسم التصنيف (صح/غلط) -->
         <div class="classification-panel">
             <h3 class="classification-title">📊 تصنيف الإجابات</h3>
-            
-            <!-- إحصائيات سريعة -->
-            <div class="classification-stats" id="quickStats">
-                <!-- هتتعبا بالجافاسكريبت -->
-            </div>
-
-            <!-- أزرار التصنيف -->
+            <div class="classification-stats" id="quickStats"></div>
             <div class="classification-buttons">
-                <button class="class-btn correct" onclick="showClassification('correct')">
-                    ✅ الإجابات الصحيحة
-                </button>
-                <button class="class-btn wrong" onclick="showClassification('wrong')">
-                    ❌ الإجابات الخاطئة
-                </button>
+                <button class="class-btn correct" onclick="showClassification('correct')">✅ صح</button>
+                <button class="class-btn wrong" onclick="showClassification('wrong')">❌ غلط</button>
             </div>
         </div>
 
-        <!-- أرشيف الأسئلة -->
         <div class="admin-box">
             <h3>🗂️ أرشيف الأسئلة</h3>
             <div id="archive-display"></div>
         </div>
     </div>
 
-    <!-- نافذة التصنيف المنبثقة -->
+    <!-- نافذة التصنيف -->
     <div id="classificationModal" class="classification-modal">
         <div class="modal-header">
             <h3 id="modalTitle">الإجابات الصحيحة</h3>
             <button class="close-modal" onclick="closeModal()">&times;</button>
         </div>
-        <div id="answersList" class="answers-list">
-            <!-- هتتعبا بالجافاسكريبت -->
-        </div>
+        <div id="answersList" class="answers-list"></div>
     </div>
 
     <script>
         const ADMIN_EMAIL = "admin@ramadan.com";
         let audioContext = null;
         let isAudioInitialized = false;
-
-        // ===== دالة عرض الرسائل =====
+        
+        // ===== التحقق من التخزين المحلي =====
+        let storageAvailable = false;
+        let fallbackStorage = {}; // تخزين بديل في الذاكرة
+        
+        // فحص localStorage
+        try {
+            const testKey = '__test__';
+            localStorage.setItem(testKey, 'test');
+            localStorage.removeItem(testKey);
+            storageAvailable = true;
+            console.log('✅ localStorage شغال');
+        } catch (e) {
+            storageAvailable = false;
+            console.log('❌ localStorage مش شغال، هاستخدم التخزين المؤقت');
+            
+            // عرض رسالة للمستخدم
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'storage-error';
+            errorDiv.innerHTML = '⚠️ متصفحك بيمنع التخزين المحلي. الإجابات هتتسجل مؤقتاً فقط.';
+            document.body.appendChild(errorDiv);
+            
+            // إخفاء الرسالة بعد 5 ثواني
+            setTimeout(() => {
+                errorDiv.style.opacity = '0';
+                setTimeout(() => errorDiv.remove(), 1000);
+            }, 5000);
+        }
+        
+        // ===== دوال التخزين الآمنة =====
+        function safeSetItem(key, value) {
+            try {
+                if (storageAvailable) {
+                    localStorage.setItem(key, value);
+                } else {
+                    fallbackStorage[key] = value;
+                }
+                return true;
+            } catch (e) {
+                console.error('خطأ في التخزين:', e);
+                return false;
+            }
+        }
+        
+        function safeGetItem(key) {
+            try {
+                if (storageAvailable) {
+                    return localStorage.getItem(key);
+                } else {
+                    return fallbackStorage[key] || null;
+                }
+            } catch (e) {
+                console.error('خطأ في القراءة:', e);
+                return null;
+            }
+        }
+        
+        function safeRemoveItem(key) {
+            try {
+                if (storageAvailable) {
+                    localStorage.removeItem(key);
+                } else {
+                    delete fallbackStorage[key];
+                }
+                return true;
+            } catch (e) {
+                console.error('خطأ في الحذف:', e);
+                return false;
+            }
+        }
+        
+        // ===== دوال JSON الآمنة =====
+        function safeParseJSON(data, defaultValue = null) {
+            try {
+                return JSON.parse(data);
+            } catch (e) {
+                console.error('خطأ في تحليل JSON:', e);
+                return defaultValue;
+            }
+        }
+        
+        // ===== دوال عرض الرسائل =====
         function showMessage(text, type = 'success', duration = 3000) {
             const container = document.getElementById('toastContainer');
+            if (!container) return;
             
             const toast = document.createElement('div');
             toast.className = `toast-message ${type}`;
@@ -836,8 +799,11 @@
 
         // ===== دوال التصنيف =====
         function updateQuickStats() {
-            const archive = JSON.parse(localStorage.getItem('archive') || "[]");
+            const archiveData = safeGetItem('archive');
+            const archive = archiveData ? safeParseJSON(archiveData, []) : [];
             const statsDiv = document.getElementById('quickStats');
+            
+            if (!statsDiv) return;
             
             if (archive.length === 0) {
                 statsDiv.innerHTML = `
@@ -852,8 +818,8 @@
             const lastSession = archive[archive.length - 1];
             const logs = lastSession.logs || [];
             
-            const correctCount = logs.filter(log => log.isCorrect).length;
-            const wrongCount = logs.filter(log => !log.isCorrect).length;
+            const correctCount = logs.filter(log => log && log.isCorrect).length;
+            const wrongCount = logs.filter(log => log && !log.isCorrect).length;
             const total = logs.length;
             
             statsDiv.innerHTML = `
@@ -879,7 +845,8 @@
             
             modalTitle.textContent = type === 'correct' ? '✅ الإجابات الصحيحة' : '❌ الإجابات الخاطئة';
             
-            const archive = JSON.parse(localStorage.getItem('archive') || "[]");
+            const archiveData = safeGetItem('archive');
+            const archive = archiveData ? safeParseJSON(archiveData, []) : [];
             
             if (archive.length === 0) {
                 answersList.innerHTML = '<div class="no-answers">لا توجد إجابات بعد</div>';
@@ -890,17 +857,15 @@
             const lastSession = archive[archive.length - 1];
             const logs = lastSession.logs || [];
             
-            const filteredLogs = logs.filter(log => 
-                type === 'correct' ? log.isCorrect : !log.isCorrect
-            );
+            const filteredLogs = logs.filter(log => log && (type === 'correct' ? log.isCorrect : !log.isCorrect));
             
             if (filteredLogs.length === 0) {
                 answersList.innerHTML = '<div class="no-answers">لا توجد إجابات في هذا التصنيف</div>';
             } else {
                 answersList.innerHTML = filteredLogs.map(log => `
                     <div class="answer-item ${type === 'correct' ? 'correct-item' : 'wrong-item'}">
-                        <div class="user-email">📧 ${log.user}</div>
-                        <div class="user-choice">📝 ${log.choiceText}</div>
+                        <div class="user-email">📧 ${log.user || 'مجهول'}</div>
+                        <div class="user-choice">📝 ${log.choiceText || 'بدون إجابة'}</div>
                     </div>
                 `).join('');
             }
@@ -937,15 +902,11 @@
 
             if (!audioContext) return;
 
-            if (audioContext.state === 'closed' || audioContext.state === 'suspended') {
-                try {
-                    await audioContext.resume();
-                } catch (e) {
-                    return;
-                }
-            }
-
             try {
+                if (audioContext.state === 'suspended') {
+                    await audioContext.resume();
+                }
+
                 const response = await fetch('music.mp3');
                 if (!response.ok) throw new Error('الملف الصوتي غير موجود');
                 
@@ -976,8 +937,6 @@
                 source.connect(audioContext.destination);
                 source.start();
 
-                console.log('تم تشغيل الموسيقى بنجاح');
-
             } catch (error) {
                 console.log("خطأ في الموسيقى:", error);
             }
@@ -995,16 +954,22 @@
         };
 
         function loadCurrentQuestion() {
-            const q = JSON.parse(localStorage.getItem('current_q')) || {
+            const qData = safeGetItem('current_q');
+            const q = qData ? safeParseJSON(qData, null) : null;
+            
+            const defaultQ = {
                 text: "ما هي السورة التي فرض فيها الصيام؟",
                 ans: ["البقرة", "الماعون", "الأنفال", "المائدة"],
                 correct: 1
             };
-            document.getElementById('q-text').innerText = q.text;
-            document.getElementById('btn1').innerText = q.ans[0];
-            document.getElementById('btn2').innerText = q.ans[1];
-            document.getElementById('btn3').innerText = q.ans[2];
-            document.getElementById('btn4').innerText = q.ans[3];
+            
+            const currentQ = q || defaultQ;
+            
+            document.getElementById('q-text').innerText = currentQ.text;
+            document.getElementById('btn1').innerText = currentQ.ans[0] || 'إجابة 1';
+            document.getElementById('btn2').innerText = currentQ.ans[1] || 'إجابة 2';
+            document.getElementById('btn3').innerText = currentQ.ans[2] || 'إجابة 3';
+            document.getElementById('btn4').innerText = currentQ.ans[3] || 'إجابة 4';
         }
 
         async function checkAccess() {
@@ -1029,15 +994,13 @@
             document.getElementById('login-screen').style.display = 'none';
             
             if (email === ADMIN_EMAIL) {
-                // لو مدير - يظهر له لوحة التحكم مع التصنيف
                 document.getElementById('admin-interface').style.display = 'block';
                 renderArchive();
                 updateQuickStats();
                 showMessage('👑 مرحباً بك أيها المدير', 'success');
             } else {
-                // لو مستخدم عادي - تظهر له المسابقة
+                safeSetItem('user', email);
                 document.getElementById('quiz-interface').style.display = 'block';
-                localStorage.setItem('user', email);
                 showMessage('🎉 أهلاً بك في المسابقة! اختر إجابتك', 'success');
             }
         }
@@ -1071,11 +1034,12 @@
                 correct: correctNum
             };
             
-            localStorage.setItem('current_q', JSON.stringify(newQ));
+            safeSetItem('current_q', JSON.stringify(newQ));
 
-            let archive = JSON.parse(localStorage.getItem('archive') || "[]");
+            const archiveData = safeGetItem('archive');
+            let archive = archiveData ? safeParseJSON(archiveData, []) : [];
             archive.push({ ...newQ, logs: [] });
-            localStorage.setItem('archive', JSON.stringify(archive));
+            safeSetItem('archive', JSON.stringify(archive));
 
             showMessage('✅ تم حفظ السؤال الجديد بنجاح', 'success');
             
@@ -1085,62 +1049,99 @@
         }
 
         function submitAns(idx) {
-            const currentQ = JSON.parse(localStorage.getItem('current_q'));
-            if (!currentQ) return;
+            const qData = safeGetItem('current_q');
+            const currentQ = qData ? safeParseJSON(qData, null) : null;
             
-            let archive = JSON.parse(localStorage.getItem('archive') || "[]");
+            if (!currentQ) {
+                showMessage('❌ حدث خطأ في تحميل السؤال', 'error');
+                return;
+            }
+            
+            const archiveData = safeGetItem('archive');
+            let archive = archiveData ? safeParseJSON(archiveData, []) : [];
 
-            if (archive.length > 0) {
-                const isCorrect = (idx == currentQ.correct);
-                archive[archive.length - 1].logs.push({
-                    user: localStorage.getItem('user') || 'مستخدم',
-                    choiceText: currentQ.ans[idx - 1],
-                    isCorrect: isCorrect
-                });
-                localStorage.setItem('archive', JSON.stringify(archive));
-                
+            if (archive.length === 0) {
+                showMessage('❌ لا يوجد سؤال نشط', 'error');
+                return;
+            }
+
+            const isCorrect = (idx == currentQ.correct);
+            
+            // التأكد من وجود logs
+            if (!archive[archive.length - 1].logs) {
+                archive[archive.length - 1].logs = [];
+            }
+            
+            archive[archive.length - 1].logs.push({
+                user: safeGetItem('user') || 'مستخدم',
+                choiceText: currentQ.ans[idx - 1] || 'إجابة غير معروفة',
+                isCorrect: isCorrect,
+                timestamp: new Date().toISOString()
+            });
+            
+            const saved = safeSetItem('archive', JSON.stringify(archive));
+            
+            if (saved) {
                 if (isCorrect) {
                     showMessage('✅ إجابة صحيحة! بارك الله فيك', 'success');
                 } else {
                     showMessage('❌ إجابة خاطئة، حاول مرة أخرى', 'error');
                 }
+                
+                // تحديث الإحصائيات إذا كنا في وضع المدير
+                if (document.getElementById('admin-interface').style.display === 'block') {
+                    updateQuickStats();
+                    renderArchive();
+                }
+            } else {
+                showMessage('❌ حدث خطأ في حفظ الإجابة', 'error');
             }
         }
 
         function renderArchive() {
-            const archive = JSON.parse(localStorage.getItem('archive') || "[]");
+            const archiveData = safeGetItem('archive');
+            const archive = archiveData ? safeParseJSON(archiveData, []) : [];
             const display = document.getElementById('archive-display');
+            
+            if (!display) return;
             
             if (archive.length === 0) {
                 display.innerHTML = '<p style="color: #888; text-align: center; padding: 20px;">لا توجد أسئلة في الأرشيف بعد</p>';
                 return;
             }
 
-            display.innerHTML = archive.map((item, index) => `
+            display.innerHTML = archive.map((item, index) => {
+                if (!item) return '';
+                
+                return `
                 <div class="session-block">
                     <button class="delete-btn" onclick="deleteSession(${index})">🗑️ حذف</button>
-                    <strong style="font-size: 1.1rem;">📌 ${item.text}</strong>
+                    <strong style="font-size: 1.1rem;">📌 ${item.text || 'سؤال بدون نص'}</strong>
                     <div style="font-size:0.9rem; margin-top:15px;">
-                        ${item.logs.length === 0 ? 
+                        ${!item.logs || item.logs.length === 0 ? 
                             '<p style="color:#888;">لا توجد إجابات بعد</p>' : 
-                            item.logs.map(l => `
+                            item.logs.map(l => l ? `
                                 <p style="color:${l.isCorrect ? '#28a745' : '#ff4d4d'}; margin:8px 0;">
-                                    ${l.isCorrect ? '✅' : '❌'} ${l.user}: ${l.choiceText}
+                                    ${l.isCorrect ? '✅' : '❌'} ${l.user || 'مجهول'}: ${l.choiceText || 'بدون إجابة'}
                                 </p>
-                            `).join('')}
+                            ` : '').join('')}
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         function deleteSession(index) {
             if (confirm("هل أنت متأكد من حذف هذا السؤال وجميع الإجابات المسجلة عليه؟")) {
-                let archive = JSON.parse(localStorage.getItem('archive') || "[]");
-                archive.splice(index, 1);
-                localStorage.setItem('archive', JSON.stringify(archive));
-                renderArchive();
-                updateQuickStats();
-                showMessage('🗑️ تم الحذف بنجاح', 'success');
+                const archiveData = safeGetItem('archive');
+                let archive = archiveData ? safeParseJSON(archiveData, []) : [];
+                
+                if (index >= 0 && index < archive.length) {
+                    archive.splice(index, 1);
+                    safeSetItem('archive', JSON.stringify(archive));
+                    renderArchive();
+                    updateQuickStats();
+                    showMessage('🗑️ تم الحذف بنجاح', 'success');
+                }
             }
         }
     </script>
